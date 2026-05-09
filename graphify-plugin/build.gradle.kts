@@ -92,7 +92,8 @@ publishing {
 }
 
 signing {
-    isRequired = System.getenv("CI") != "true"
-    sign(publishing.publications)
+    if (System.getenv("CI") != "true" && !version.toString().endsWith("-SNAPSHOT")) {
+        sign(publishing.publications)
+    }
     useGpgCmd()
 }
