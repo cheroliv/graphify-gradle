@@ -92,6 +92,7 @@ publishing {
 }
 
 signing {
+    isRequired = System.getenv("CI") != "true"
     sign(publishing.publications)
     useGpgCmd()
 }
