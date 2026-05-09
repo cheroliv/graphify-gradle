@@ -1,0 +1,4 @@
+.gradle/
+build/
+graph.json
+graphify-plugin/build/

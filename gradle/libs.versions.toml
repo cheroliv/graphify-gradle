@@ -1,0 +1,5 @@
+[versions]
+graphify = "0.0.1"
+
+[plugins]
+graphify = { id = "com.cheroliv.graphify", version.ref = "graphify" }
