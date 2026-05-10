@@ -1,0 +1,67 @@
+= PROMPT_REPRISE — Session 001 — Graphify Gradle
+:author: cheroliv + opencode (deepseek-v4-pro)
+:date: 2026-05-09
+:session: 001
+
+[abstract]
+Amorçage pour la prochaine session opencode.
+
+== Contexte de Reprise (EAGER)
+
+=== Ce qui a ete accompli — Session 000
+
+- Gouvernance agent bootstrappee : `AGENT.adoc`, `.agents/INDEX.adoc`, `PROMPT_REPRISE.adoc`
+- Structure `.agents/` (sessions/, archives/, encyclopedies/, backup/) en place
+- Plugin compile ✅, publishToMavenLocal OK ✅
+
+=== Etat du code source
+
+4 fichiers Kotlin (366 lignes) :
+- `GraphifyPlugin.kt` — entry point
+- `GraphifyExtension.kt` — DSL config
+- `ScanWorkspaceTask.kt` — cœur (walk + extraction + Jackson)
+- `GraphModel.kt` — data classes JSON
+
+ZERO test actuellement.
+
+== Mission du Jour — Session 001
+
+=== Objectif prioritaire : GF-1 — Tests unitaires
+
+Couvrir les 3 composants principaux :
+. **Tests ScanWorkspaceTask** :
+   - Créer une arborescence temporaire (tempDir) avec .kt, .adoc, .git/
+   - Vérifier exclusion de .git/, build/, .gradle/
+   - Vérifier extraction des nœuds (type file/directory/project)
+   - Vérifier extraction des arêtes (imports Kotlin, references AsciiDoc)
+   - Vérifier détection des communautés (par repo git parent)
+   - Vérifier sérialisation JSON round-trip
+
+. **Tests GraphModel** :
+   - Sérialisation Jackson (ObjectMapper)
+   - Désérialisation round-trip
+   - Valeurs par défaut (emptyList)
+
+. **Tests exclusion patterns** :
+   - Vérifier que les 6 patterns par défaut fonctionnent
+   - Tester un pattern custom
+
+Framework : JUnit 5 + Kotlin test. Ne pas utiliser Cucumber pour GF-1.
+
+=== Objectifs secondaires
+
+- `./gradlew compileKotlin compileTestKotlin` après chaque modif
+- `./gradlew publishToMavenLocal` après modif code main
+- Viser 10+ tests unitaires
+
+== Rappel — Regles Globales (EAGER)
+
+. Regle 0 : publishToMavenLocal OBLIGATOIRE apres modif code source
+. Regle 1 : Aucun commit sans permission explicite
+. Regle 1b : Backup avant modif fichier config non versionne
+. Regle 2 : Pas de ./gradlew test en fin de session sans permission
+. Regle 4bis : DAG inter-plugins N0→N1→N2→N3 — graphify est N0, ne depend de personne
+
+[.text-right]
+*PROMPT_REPRISE genere le 9 mai 2026 — Bootstrap gouvernance agent.*
+*Prochaine session : 001 — GF-1 Tests unitaires (10+ tests JUnit5).*

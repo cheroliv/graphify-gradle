@@ -1,0 +1,8 @@
+= Test Coverage Analysis — Graphify Gradle
+
+_Statut_ : ZERO test — GF-1 est la prochaine mission
+
+== Prochaine etape
+
+Session 001 — GF-1 : Tests unitaires JUnit5 sur ScanWorkspaceTask + GraphModel + exclusion patterns.
+Cible : 10+ tests.

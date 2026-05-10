@@ -1,0 +1,6 @@
+= Completed Tasks Archive — Mai 2026
+
+|===
+| Date | Session | EPIC/US | Description
+| 2026-05-09 | 000 | GF-0 | Bootstrap gouvernance agent graphify-gradle. Structure .agents/ (sessions/, archives/, encyclopedies/, backup/). AGENT.adoc (~230 lignes), PROMPT_REPRISE.adoc, INDEX.adoc, SESSIONS_HISTORY.adoc, TEST_COVERAGE_ANALYSIS.adoc, SESSION_CHECKLIST.adoc crees.
+|===

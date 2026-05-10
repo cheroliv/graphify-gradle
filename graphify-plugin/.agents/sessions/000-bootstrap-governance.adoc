@@ -1,0 +1,36 @@
+= Rapport Session 000 — Graphify Gradle — Bootstrap gouvernance agent
+:date: 2026-05-09
+:type: governance
+:score: 10/10
+
+== Contexte
+
+graphify-gradle existe (plugin compilable, publishToMavenLocal fait) mais sans `.agents/`.
+Bootstrap gouvernance selon le pattern plantuml-gradle (> 200 lignes AGENT.adoc).
+
+== Actions
+
+. Créé structure `.agents/` : sessions/, archives/, encyclopedies/, backup/ ✅
+. Créé `AGENT.adoc` — directives complètes (~230 lignes) :
+   - Avertissement racine de travail (graphify-plugin/)
+   - Projet (N0, zéro dépendance inter-plugin, output graph.json)
+   - Cercles de confiance (cercle 4 public Apache 2.0)
+   - Règles absolues (git, tests, sécurité, fichiers config, fichiers personnels)
+   - Méthodologie (1 fichier à la fois, compile après chaque modif)
+   - Architecture (composants clés : ScanWorkspaceTask cœur 294 lignes, GraphModel contrat JSON)
+   - Procédure 6 étapes de fin de session + rotation backup
+   - Anti-patterns (4 patterns clés)
+   - Bootstrap nouveau projet (6 étapes)
+. Créé `.agents/INDEX.adoc` — Roadmap (GF-0→GF-4) + Sessions + Portefeuille ✅
+. Créé `PROMPT_REPRISE.adoc` — Mission session 001 (GF-1 Tests unitaires) ✅
+. Créé `.agents/SESSIONS_HISTORY.adoc` — Session 000 ✅
+. Créé `.agents/TEST_COVERAGE_ANALYSIS.adoc` — zéro test, GF-1 prochaine ✅
+. Créé `.agents/SESSION_CHECKLIST.adoc` — Hook ouverture + fermeture + commandes vérification ✅
+. Créé `.agents/archives/COMPLETED_TASKS_ARCHIVE_2026-05.adoc` — Session 000 archivée ✅
+
+== Résultats
+
+- 7 fichiers créés dans `graphify-plugin/.agents/` et racine
+- Pattern aligné sur plantuml-gradle (plugin dans sous-dossier)
+- Prochaine session : GF-1 — Tests unitaires (ScanWorkspaceTask, GraphModel, exclusion patterns)
+- Cible : 10+ tests JUnit5

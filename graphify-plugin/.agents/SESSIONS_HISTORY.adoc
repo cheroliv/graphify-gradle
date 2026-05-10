@@ -1,0 +1,6 @@
+= Sessions History — Graphify Gradle
+
+|===
+| # | Date | Type | Sujet | Score
+| 000 | 2026-05-09 | governance | Bootstrap gouvernance agent (.agents/ + AGENT.adoc + PROMPT_REPRISE + INDEX.adoc + SESSIONS_HISTORY) | 10/10
+|===
