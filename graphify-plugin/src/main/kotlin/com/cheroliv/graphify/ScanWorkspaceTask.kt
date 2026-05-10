@@ -4,6 +4,7 @@ import com.cheroliv.graphify.model.GraphCommunity
 import com.cheroliv.graphify.model.GraphEdge
 import com.cheroliv.graphify.model.GraphModel
 import com.cheroliv.graphify.model.GraphNode
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.gradle.api.DefaultTask
@@ -30,7 +31,9 @@ open class ScanWorkspaceTask : DefaultTask() {
     @get:Internal
     var excludePatterns: List<String> = emptyList()
 
-    private val mapper: ObjectMapper = ObjectMapper().registerKotlinModule()
+    private val mapper: ObjectMapper = ObjectMapper()
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        .registerKotlinModule()
 
     @TaskAction
     fun scan() {
@@ -40,17 +43,18 @@ open class ScanWorkspaceTask : DefaultTask() {
         val matchers = excludePatterns.map { pattern ->
             FileSystems.getDefault().getPathMatcher("glob:$pattern")
         }
+        val customExcludedNames = extractExcludedNamesFromPatterns(excludePatterns)
 
         val allFileData = mutableListOf<FileInfo>()
         try {
             Files.walkFileTree(root, object : SimpleFileVisitor<Path>() {
                 override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
-                    if (isExcluded(dir, root, matchers)) return FileVisitResult.SKIP_SUBTREE
+                    if (isExcluded(dir, root, matchers, customExcludedNames)) return FileVisitResult.SKIP_SUBTREE
                     return FileVisitResult.CONTINUE
                 }
 
                 override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                    if (!isExcluded(file, root, matchers)) {
+                    if (!isExcluded(file, root, matchers, customExcludedNames)) {
                         allFileData.add(FileInfo(file, attrs.size()))
                     }
                     return FileVisitResult.CONTINUE
@@ -75,7 +79,7 @@ open class ScanWorkspaceTask : DefaultTask() {
         val dirs = allFiles.asSequence()
             .map { it.parent }
             .distinct()
-            .filter { dir -> safe { Files.list(dir).use { s -> s.anyMatch { Files.isRegularFile(it) } } } ?: false }
+            .filter { dir -> allFiles.any { it.parent == dir } }
             .toList()
 
         val repoMap = buildRepoMap(root, allFiles)
@@ -94,10 +98,21 @@ open class ScanWorkspaceTask : DefaultTask() {
         logger.lifecycle("Graphify scan complete: ${nodes.size} nodes, ${edges.size} edges, ${communities.size} communities -> ${output.absolutePath}")
     }
 
-    private fun isExcluded(path: Path, root: Path, matchers: List<PathMatcher>): Boolean {
+    private val excludedDirNames = setOf("build", "node_modules", ".gradle", ".git", ".idea", "target")
+
+    private fun isExcluded(path: Path, root: Path, matchers: List<PathMatcher>, customExcludedNames: Set<String>): Boolean {
         if (path == root) return false
         val relative = safe { root.relativize(path) } ?: return true
-        return matchers.any { it.matches(relative) }
+        if (matchers.any { it.matches(relative) }) return true
+        val name = path.fileName.toString()
+        if (excludedDirNames.contains(name) || customExcludedNames.contains(name)) return true
+        return false
+    }
+
+    private fun extractExcludedNamesFromPatterns(patterns: List<String>): Set<String> {
+        return patterns.flatMap { pattern ->
+            pattern.split("/", "**").filter { it.isNotEmpty() && it.all { c -> c.isLetterOrDigit() || c == '_' || c == '-' || c == '.' } }
+        }.toSet()
     }
 
     private fun isProjectMarker(path: Path): Boolean {
@@ -114,31 +129,20 @@ open class ScanWorkspaceTask : DefaultTask() {
         repoMap: Map<Path, String>
     ): List<GraphNode> {
         val nodes = mutableListOf<GraphNode>()
+        val addedDirs = mutableSetOf<String>()
 
         for (dir in dirs) {
             val relative = safe { root.relativize(dir).toString() } ?: continue
+            val isProject = projects.contains(dir)
             nodes.add(
                 GraphNode(
                     id = relative,
                     label = dir.fileName.toString(),
-                    type = "directory",
+                    type = if (isProject) "project" else "directory",
                     community = repoMap[dir]
                 )
             )
-        }
-
-        for (project in projects) {
-            val relative = safe { root.relativize(project).toString() } ?: continue
-            if (nodes.none { it.id == relative }) {
-                nodes.add(
-                    GraphNode(
-                        id = relative,
-                        label = project.fileName.toString(),
-                        type = "project",
-                        community = repoMap[project]
-                    )
-                )
-            }
+            addedDirs.add(relative)
         }
 
         for ((path, size) in fileData) {
@@ -228,11 +232,8 @@ open class ScanWorkspaceTask : DefaultTask() {
     private fun resolveImportToDir(import: String, projectDirs: Set<Path>, root: Path): Path? {
         for (projDir in projectDirs) {
             val srcDir = projDir.resolve("src/main/kotlin")
-            val srcRel = safe { root.relativize(srcDir).toString() } ?: continue
-            val expectedPath = import.replace('.', '/')
-            if (srcRel.contains(expectedPath.take(expectedPath.length / 2))) {
-                return projDir
-            }
+            val packageDir = srcDir.resolve(import.replace('.', '/').substringBeforeLast("/"))
+            if (safe { Files.isDirectory(packageDir) } == true) return projDir
         }
         return null
     }

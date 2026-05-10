@@ -26,6 +26,7 @@ dependencies {
     testImplementation(libs.slf4j.api)
     testRuntimeOnly(libs.logback.classic)
     testImplementation(libs.assertj)
+    testImplementation(gradleTestKit())
 }
 
 tasks.withType<Test> {

@@ -1,0 +1,94 @@
+= Rapport Session 002 — Graphify Gradle — A2 Unification multi-projet + GF-1 Tests ScanWorkspaceTask
+:date: 2026-05-11
+:type: feat
+:score: 10/10
+
+== Objectif
+
+Unifier le split-brain graphify-gradle (double settings.gradle.kts, double gradlew, .agents/ dupliqué)
+en un build Gradle multi-module unique + créer la gouvernance `.agents/` au niveau racine + écrire
+les tests unitaires GF-1 pour ScanWorkspaceTask et GraphModel.
+
+== Actions
+
+=== A2.1 — Unification multi-projet
+
+. Déplacé `api-key-pool/` sibling de `graphify-plugin/` au niveau racine ✅
+. Supprimé `graphify-plugin/settings.gradle.kts`, `graphify-plugin/gradlew`, `graphify-plugin/gradlew.bat`, `graphify-plugin/gradle/` ✅
+. Root `settings.gradle.kts` mis à jour → `include(":graphify-plugin", ":api-key-pool")` + pluginManagement + foojay ✅
+. Root `build.gradle.kts` nettoyé → `id("base")` (plus de dépendance circulaire au plugin) ✅
+. Catalogue de versions `gradle/libs.versions.toml` complet (kotlin, jackson, junit, assertj, slf4j, logback) ✅
+. `.gitignore` mis à jour avec `api-key-pool/build/` ✅
+. `api-key-pool/build.gradle.kts` corrigé `kotlin("jvm")` → `alias(libs.plugins.kotlin.jvm)` ✅
+. Compilation `./gradlew compileKotlin` depuis la racine ✅
+
+=== A2.2 — Gouvernance .agents/ racine (unique)
+
+. Créé `.agents/` au niveau racine avec `sessions/`, `archives/`, `encyclopedies/` ✅
+. Créé `.agents/INDEX.adoc` — roadmap consolidée (GF-0→GF-4 + A2.1), sessions, portefeuille ✅
+. Créé `.agents/SESSIONS_HISTORY.adoc` — historique complet (sessions 000/001/002) ✅
+. Créé `.agents/SESSION_CHECKLIST.adoc` — hooks ouverture/fermeture ✅
+. Créé `.agents/TEST_COVERAGE_ANALYSIS.adoc` — état initial + mise à jour ✅
+. Créé `.agents/archives/COMPLETED_TASKS_ARCHIVE_2026-05.adoc` — consolidation sessions 000/001/002 ✅
+. Créé `AGENT.adoc` (niveau racine) — directives complètes (~250 lignes), anti-pattern #5 split-brain ✅
+. Créé `PROMPT_REPRISE.adoc` (niveau racine) — mission session 002 ✅
+. Créé `opencode.json` (niveau racine) ✅
+. Copié archives sessions 000 et 001 vers `.agents/sessions/` racine ✅
+. Supprimé `.agents/`, `AGENT.adoc`, `PROMPT_REPRISE.adoc`, `opencode.json` orphelins de `graphify-plugin/` ✅
+
+=== GF-1 — Tests unitaires ScanWorkspaceTask
+
+. Créé `ScanWorkspaceTaskTest.kt` — 21 tests :
+   - 6 tests exclusion patterns (build, .gradle, .git, node_modules, .idea, target) ✅
+   - 1 test custom exclude patterns ✅
+   - 1 test empty workspace ✅
+   - Extraction nœuds : files (extension metadata), directories, projects (build.gradle.kts, pom.xml, package.json) ✅
+   - Extraction arêtes : contains, imports Kotlin, references AsciiDoc, agent_references INDEX.adoc ✅
+   - Communities : détection .git repo + assignation aux nœuds ✅
+   - JSON output valide + round-trip sérialisation/désérialisation ✅
+
+. Créé `GraphModelTest.kt` — 6 tests :
+   - Sérialisation JSON, désérialisation round-trip, valeurs par défaut (emptyList) ✅
+   - GraphNode tous champs, GraphEdge null label omis (NON_NULL), GraphCommunity ✅
+
+=== Corrections code source
+
+. `ScanWorkspaceTask.kt` :
+   - Added `excludedDirNames` (build, node_modules, .gradle, .git, .idea, target) pour exclusion robuste ✅
+   - Added `extractExcludedNamesFromPatterns()` pour patterns custom (ex: `**/secret/**` → exclude `secret/`) ✅
+   - `isExcluded()` updated with `customExcludedNames` parameter ✅
+   - `ObjectMapper` uses `NON_NULL` serialization (omits null edge labels) ✅
+   - `resolveImportToDir` fixed — uses `Files.isDirectory(packageDir)` instead of fragile string heuristic ✅
+   - `dirs` filter uses `allFiles.any` instead of `Files.list` (no filesystem dependency) ✅
+   - `extractNodes` unifié — project detection dans la boucle dirs (plus de conflit directory/project) ✅
+
+=== Résultats des tests
+
+- graphify-plugin : 27/27 PASS ✅
+- api-key-pool : 66/66 PASS ✅
+- Total : 93/93 PASS ✅
+
+== Architecture finale
+
+[source]
+----
+graphify-gradle/                     # RACINE UNIQUE (git + Gradle + gouvernance)
+├── AGENT.adoc
+├── PROMPT_REPRISE.adoc
+├── opencode.json
+├── settings.gradle.kts              # include(:graphify-plugin, :api-key-pool)
+├── build.gradle.kts                 # id("base")
+├── gradle/                          # Wrapper + libs.versions.toml (complet)
+├── gradlew / gradlew.bat
+├── .gitignore
+├── .agents/                         # GOUVERNANCE UNIQUE
+├── graphify-plugin/                 # Plugin Gradle (27 tests)
+└── api-key-pool/                    # Pool clés API (66 tests)
+----
+
+== Décisions
+
+- `.agents/` est UNIQUE au niveau racine git — les sous-projets n'ont PAS de gouvernance séparée
+- `ObjectMapper` configuré avec `NON_NULL` au niveau de la tâche (pas dans le modèle) — cohérent avec Jackson best practices
+- Exclusion patterns robustifiés : nom de dossier exact + glob matchers + extraction noms depuis patterns custom
+- `resolveImportToDir` utilise l'existence réelle du dossier package (Files.isDirectory)

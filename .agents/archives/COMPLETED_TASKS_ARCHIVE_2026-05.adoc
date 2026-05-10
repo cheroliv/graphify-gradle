@@ -1,0 +1,9 @@
+= Completed Tasks Archive — Mai 2026
+
+|===
+| Date | Session | EPIC/US | Description
+| 2026-05-11 | 002 | GF-1 | Tests unitaires ScanWorkspaceTask + GraphModel. 27 tests (21 ScanWorkspaceTask + 6 GraphModel), 27/27 PASS. Corrections code source : exclusion robuste (excludedDirNames + custom pattern extraction), resolveImportToDir via Files.isDirectory, ObjectMapper NON_NULL, extractNodes unifié project/directory. Total : 93/93 PASS (27 + 66 api-key-pool).
+| 2026-05-11 | 002 | A2.1 | Unification multi-projet graphify-gradle. api-key-pool déplacé sibling de graphify-plugin. Suppression settings.gradle.kts, gradlew, gradle/ dupliqués. Root settings.gradle.kts inclut :graphify-plugin + :api-key-pool. Catalogue de versions (libs.versions.toml) complet au niveau racine. .agents/ créé au niveau racine (INDEX, SESSIONS_HISTORY, SESSION_CHECKLIST, TEST_COVERAGE_ANALYSIS, COMPLETED_TASKS_ARCHIVE, sessions/, archives/, encyclopedies/). Compilation OK depuis la racine.
+| 2026-05-10 | 001 | GF-5 | Extraction api-key-pool de plantuml-gradle → N0. 6 src + 6 tests, 66/66 PASS.
+| 2026-05-09 | 000 | GF-0 | Bootstrap gouvernance agent graphify-gradle. Structure .agents/ (sessions/, archives/, encyclopedies/, backup/). AGENT.adoc (~230 lignes), PROMPT_REPRISE.adoc, INDEX.adoc, SESSIONS_HISTORY.adoc, TEST_COVERAGE_ANALYSIS.adoc, SESSION_CHECKLIST.adoc créés.
+|===

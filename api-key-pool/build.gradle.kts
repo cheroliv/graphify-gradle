@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 kotlin.jvmToolchain(JavaVersion.VERSION_24.ordinal)

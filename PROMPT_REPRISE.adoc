@@ -1,0 +1,58 @@
+= PROMPT_REPRISE — Session 003 — Graphify Gradle
+:author: cheroliv + opencode (deepseek-v4-pro)
+:date: 2026-05-12
+:session: 003
+
+[abstract]
+Amorçage pour la prochaine session opencode. GF-2 à attaquer.
+
+== Contexte de Reprise (EAGER)
+
+=== Ce qui a été accompli — Session 002 (11 mai 2026)
+
+- **A2.1 — Unification multi-projet** : api-key-pool sibling, unique gradlew/settings, .agents/ racine unique
+- **A2.2 — Gouvernance** : AGENT.adoc, PROMPT_REPRISE.adoc, opencode.json, INDEX.adoc, SESSIONS_HISTORY, SESSION_CHECKLIST, TEST_COVERAGE_ANALYSIS, archives au niveau racine
+- **GF-1 — Tests unitaires** : 27 tests (ScanWorkspaceTask 21 + GraphModel 6), 27/27 PASS
+- **Corrections** : exclusion robuste (excludedDirNames + custom patterns), resolveImportToDir par Files.isDirectory, ObjectMapper NON_NULL, extractNodes unifié project/directory
+- **Total** : 93 tests (27 graphify-plugin + 66 api-key-pool), 93/93 PASS ✅
+
+=== Architecture actuelle
+
+[source]
+----
+graphify-gradle/                     # RACINE UNIQUE
+├── AGENT.adoc / PROMPT_REPRISE.adoc / opencode.json
+├── settings.gradle.kts              # :graphify-plugin, :api-key-pool
+├── build.gradle.kts                 # id("base")
+├── gradle/                          # libs.versions.toml complet
+├── .agents/                         # GOUVERNANCE UNIQUE
+├── graphify-plugin/                 # 27 tests ✅
+└── api-key-pool/                    # 66 tests ✅
+----
+
+== Mission du Jour — Session 003
+
+=== Objectif prioritaire : GF-2 — Tests intégration
+
+. Scanner le workspace réel (`/home/cheroliv/workspace/`)
+. Valider structure graph.json produite (nœuds, arêtes, communautés)
+. Vérifier que les 6 boroughs + CSS apparaissent comme communautés
+. Vérifier exclusion effective dans un scan réel
+. Mesurer performance (taille graph.json, temps de scan)
+
+=== Objectifs secondaires
+
+- `./gradlew :graphify-plugin:publishToMavenLocal` après modifs
+- Viser 5+ tests intégration
+
+== Rappel — Règles Globales (EAGER)
+
+. Règle 0 : publishToMavenLocal OBLIGATOIRE après modif code source
+. Règle 1 : Aucun commit sans permission explicite
+. Règle 1b : Backup avant modif fichier config non versionné
+. Règle 2 : Pas de ./gradlew test en fin de session sans permission
+. Règle 4bis : DAG inter-plugins N0→N1→N2→N3 — graphify est N0
+
+[.text-right]
+*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 002.*
+*Prochaine session : 003 — GF-2 Tests intégration.*

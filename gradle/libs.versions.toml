@@ -1,5 +1,23 @@
 [versions]
 graphify = "0.0.1"
+kotlin = "2.2.20"
+jackson = "2.18.3"
+junit = "5.10.1"
 
 [plugins]
 graphify = { id = "com.cheroliv.graphify", version.ref = "graphify" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+publish = { id = "com.gradleup.gratatouille", version = "0.1.4" }
+
+[libraries]
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version = "1.10.1" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version = "2.0.17" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.26" }
+assertj = { module = "org.assertj:assertj-core", version = "3.25.3" }
+
+[bundles]
+jackson = ["jackson-module-kotlin", "jackson-dataformat-yaml"]

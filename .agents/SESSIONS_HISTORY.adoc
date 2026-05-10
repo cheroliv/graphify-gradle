@@ -2,6 +2,7 @@
 
 |===
 | # | Date | Type | Sujet | Score
+| 002 | 2026-05-11 | feat | A2 — Unification multi-projet + .agents/ racine + GF-1 Tests ScanWorkspaceTask : 27 tests (21 task + 6 model), 93/93 total PASS | 10/10
 | 001 | 2026-05-10 | feat | Extraction apikey/ de plantuml-gradle → :api-key-pool N0 : 6 src + 6 tests, package com.cheroliv.graphify.apikey, 66/66 PASS | 10/10
 | 000 | 2026-05-09 | governance | Bootstrap gouvernance agent (.agents/ + AGENT.adoc + PROMPT_REPRISE + INDEX.adoc + SESSIONS_HISTORY) | 10/10
 |===

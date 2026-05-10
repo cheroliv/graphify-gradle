@@ -1,0 +1,234 @@
+= Graphify Gradle — Directives Agent
+:toc: left
+:toclevels: 3
+:icons: font
+:sectnums:
+
+[CAUTION]
+====
+**ARRÊT OBLIGATOIRE** avant `rm`, `Write` (écrasement), ou suppression de fichier :
+1. LIRE le fichier en entier
+2. VÉRIFIER `git ls-files -- <fichier>` (si pas dans git = pas de retour possible)
+3. DEMANDER confirmation fichier par fichier à l'utilisateur
+4. ATTENDRE "oui" avant d'agir
+====
+
+== Avertissement — Racine de Travail
+
+**Ce fichier est dans `graphify-gradle/`**, la racine de travail du projet.
+
+La racine du dépôt git (`graphify-gradle/`) contient le repo git ET les fichiers de build Gradle
+ET la gouvernance agent. Les sous-projets (`graphify-plugin/`, `api-key-pool/`) n'ont PAS
+de gouvernance agent séparée — `.agents/` est UNIQUE au niveau racine.
+
+* Les chemins dans ce fichier sont relatifs à **`graphify-gradle/`**
+* L'agent travaille depuis **`graphify-gradle/`**
+* Les commandes Gradle s'exécutent depuis **`graphify-gradle/`**
+
+== Projet
+
+**Nom** : graphify-gradle (plugin Gradle N0 — extraction knowledge graph du workspace)
+**Stack** : Kotlin, Gradle (plugin development), Jackson (sérialisation JSON)
+**Documentation** : AsciiDoc
+**DAG** : N0 — zéro dépendance inter-plugin. Output : `graph.json` consommable par N1/N2/N3.
+
+=== Objectif
+
+Scanner le workspace (`/home/cheroliv/workspace/`) récursivement, extraire les nœuds
+(fichiers, répertoires, projets), les arêtes (imports Kotlin/Java, références AsciiDoc),
+les communautés (par repo git parent), et sérialiser en `graph.json` standardisé.
+Output consommé par : plantuml-gradle (diagrammes), slider-gradle (RAG ancré),
+bakery-gradle (page architecture), engine (agrégation N3).
+
+=== Contexte — Cercles de Confiance
+
+Ce projet vit dans `foundry/OSS/graphify-gradle/` → *cercle 4 (public, Apache 2.0)*.
+- Ne pas référencer de secrets ici (ils sont dans `configuration/`, cercle 1)
+- La racine scannée est le workspace (`/home/cheroliv/workspace`) — contient cercle 0/1/2
+- Voir `configuration/.agents/AGENT_GOVERNANCE.adoc` pour l'ontologie spatiale complète
+
+== Règles Absolues
+
+=== Git
+
+**INTERDICTION FORMELLE** de commit/push/merge sans permission explicite de l'utilisateur.
+
+Commandes autorisées (lecture seule) : `git status`, `git diff`, `git log`, `git show`
+Commandes interdites (sauf ordre) : `git add`, `git commit`, `git push`, `git merge`, `git rebase`
+
+=== Tests
+
+L'agent NE DOIT JAMAIS lancer de tests (`./gradlew test`, etc.) lors de la procédure de fin de session SANS permission explicite de l'utilisateur.
+
+=== Sécurité
+
+* Jamais de secrets en dur dans le code
+* Jamais de credentials dans les fichiers de config
+* Jamais de tokens API commités dans Git
+
+=== Fichiers de configuration — RÈGLE ABSOLUE DE SÛRETÉ
+
+**PRINCIPE** : Tout fichier de configuration (YAML, JSON, XML, TOML, properties, .env, etc.) peut contenir des données sensibles non versionnées. Modifier un tel fichier sans précaution met en danger l'intégrité du travail du développeur.
+
+**INTERDICTIONS** :
+
+* **NE JAMAIS écraser** un fichier de configuration existant avec un `Write` complet si on peut faire un `Edit` partiel
+* **NE JAMAIS remplacer** des valeurs sensibles existantes (tokens, mots de passe, clés API, URLs de production) par des valeurs factices ou placeholders
+* **NE JAMAIS modifier** un fichier sans avoir **d'abord** vérifié s'il est dans `.gitignore` (`git check-ignore <fichier>`) — un fichier ignoré n'a pas de `git restore` possible
+
+**Procédure OBLIGATOIRE** avant modification d'un fichier de configuration :
+
+. `git check-ignore <fichier>` : Vérifier si le fichier est versionné
+. `git ls-files -- <fichier>` : Confirmer s'il est tracké
+. Si le fichier **n'est pas tracké** (pas dans git) : **CRÉER UNE SAUVEGARDE** avant toute modification (`cp <fichier> <fichier>.bak`)
+. Si le fichier contient des valeurs sensibles : **les PRÉSERVER intactes**, ne jamais les remplacer par des placeholders
+. Privilégier **l'edit partiel** (modification ciblée) plutôt que **l'écriture complète** (écrasement total)
+. Après modification : **vérifier** que les valeurs sensibles sont toujours présentes
+
+=== Fichiers personnels — Interdiction de modifier
+
+_L'agent NE DOIT JAMAIS_ modifier, écraser ou supprimer un fichier personnel de l'utilisateur (`~/.gitconfig`, `~/.bashrc`, `~/.ssh/config`, `~/.zshrc`, etc.) _SANS permission explicite de l'utilisateur_.
+
+=== Méthodologie de Travail
+
+* **1 fichier à la fois** : Modifier un seul fichier avant de passer au suivant
+* **Validation immédiate** : Compiler après chaque modification
+* **Contexte léger** : Maximum 50k tokens EAGER (~3000 lignes)
+* **Règle d'or** : Mieux vaut 5 sessions de 20 minutes qu'une session de 2 heures avec debugging chaos. Si la conversation > 50 messages ou > 3 fichiers modifiés en parallèle, splitter en nouvelle session.
+
+== Architecture du Projet
+
+=== Structure (depuis la racine de travail = ce répertoire)
+
+[source,bash]
+----
+graphify-gradle/                     # ⭐ RACINE DE TRAVAIL (ce répertoire)
+├── AGENT.adoc                       # Directives complètes (ce fichier)
+├── PROMPT_REPRISE.adoc              # Mission session en cours (EAGER)
+├── opencode.json                    # Config opencode
+├── settings.gradle.kts              # Root settings (:graphify-plugin, :api-key-pool)
+├── build.gradle.kts                 # Root build (base plugin)
+├── gradle/                          # Wrapper + version catalog
+├── gradlew / gradlew.bat
+├── .gitignore
+├── .agents/                         # Gouvernance agent (UNIQUE, niveau racine)
+│   ├── INDEX.adoc                   # Règles + sessions récentes + roadmap (EAGER)
+│   ├── SESSIONS_HISTORY.adoc        # Historique complet (EAGER)
+│   ├── SESSION_CHECKLIST.adoc       # Checklist ouverture/fermeture
+│   ├── TEST_COVERAGE_ANALYSIS.adoc  # Analyse couverture tests
+│   ├── sessions/                    # Archives par session
+│   ├── archives/                    # Archives mensuelles
+│   └── encyclopedies/               # Connaissance froide
+├── graphify-plugin/                 # :graphify-plugin (plugin Gradle)
+│   ├── build.gradle.kts
+│   └── src/main/kotlin/com/cheroliv/graphify/
+│       ├── GraphifyPlugin.kt        # Plugin Gradle — entry point
+│       ├── GraphifyExtension.kt     # Extension DSL
+│       ├── ScanWorkspaceTask.kt     # Tâche scanWorkspace — walk + extraction
+│       └── model/
+│           └── GraphModel.kt        # Data classes JSON
+└── api-key-pool/                    # :api-key-pool (pool de clés API, N0)
+    ├── build.gradle.kts
+    └── src/main/kotlin/com/cheroliv/graphify/apikey/
+----
+
+=== Composants Clés
+
+* **GraphifyPlugin** : Point d'entrée du plugin — enregistre l'extension et la tâche
+* **GraphifyExtension** : DSL — `rootDir`, `outputFile`, `excludePatterns`
+* **ScanWorkspaceTask** : Cœur du plugin — walk récursif (Files.walkFileTree), extraction nœuds/arêtes/communautés, sérialisation Jackson
+* **GraphModel** : Contrat JSON — GraphNode, GraphEdge, GraphCommunity
+* **api-key-pool** : Pool de clés API avec quota tracking/réinitialisation/journalisation
+
+=== Commandes Utiles
+
+[source,shell]
+----
+# Depuis la racine de travail (graphify-gradle/)
+./gradlew compileKotlin
+./gradlew :graphify-plugin:publishToMavenLocal    # OBLIGATOIRE après modif code
+./gradlew :graphify-plugin:test                    # Tests graphify-plugin
+./gradlew :api-key-pool:test                       # Tests api-key-pool
+./gradlew test                                     # Tous les tests
+
+# Tâche principale
+./gradlew :graphify-plugin:scanWorkspace           # Scan → graph.json
+----
+
+== Gestion du Contexte — CRITIQUE
+
+* **`PROMPT_REPRISE.adoc`** → mission de la session en cours et priorités de la prochaine session
+* **`.agents/INDEX.adoc`** → roadmap et statut des EPICs (EAGER)
+
+== Session Procedure
+
+=== Début de Session
+
+1. Lire `PROMPT_REPRISE.adoc` pour la mission en cours
+2. Lire `.agents/INDEX.adoc` pour les règles absolues
+3. `git status` — vérifier l'état du dépôt
+4. `./gradlew compileKotlin` — vérifier que le build compile avant de coder
+
+=== Fin de Session
+
+**Mots-clés déclencheurs** : "nouvelle session", "je quitte", "session terminée", "à plus tard", "on arrête là"
+
+**Procédure obligatoire en 6 étapes** :
+
+1. **Créer l'archive LAZY** : `.agents/sessions/{N}-{type}-{sujet}.adoc`
+2. **Mettre à jour PROMPT_REPRISE.adoc** — Mission N+1 (max 70 lignes)
+3. **Mettre à jour SESSIONS_HISTORY.adoc** : `.agents/SESSIONS_HISTORY.adoc` — Ajouter la session terminée
+4. **Mettre à jour INDEX.adoc** : `.agents/INDEX.adoc` — Date, session en cours N+1, roadmap, portefeuille
+5. **Mettre à jour TEST_COVERAGE_ANALYSIS.adoc** (si tests modifiés)
+6. **Mettre à jour COMPLETED_TASKS_ARCHIVE.adoc** : `.agents/archives/COMPLETED_TASKS_ARCHIVE_{mois}.adoc`
+
+**Aucune étape ne peut être marquée OK si le fichier n'a pas été effectivement modifié et vérifié.**
+
+== Conventions de Code
+
+* Kotlin idiomatique, pas de commentaires sauf demande
+* Tests : JUnit5 + Kotlin test
+* Documentation : AsciiDoc (.adoc) uniquement
+* Sérialisation : Jackson (ObjectMapper + registerKotlinModule)
+
+=== Références de Style — Codebases LAZY
+
+|===
+| Projet | Chemin | Rôle
+| plantuml-gradle | `/home/cheroliv/workspace/foundry/OSS/plantuml-gradle/plantuml-plugin` | Plugin Gradle mature — référence principale
+| bakery-gradle | `/home/cheroliv/workspace/foundry/OSS/bakery-gradle/bakery-plugin` | Plugin Gradle convention-based
+| codebase-gradle | `/home/cheroliv/workspace/foundry/OSS/codebase-gradle` | Plugin Gradle — RAG pgvector
+|===
+
+== Fichiers EAGER (chargés automatiquement)
+
+|===
+| Fichier | Rôle
+| `PROMPT_REPRISE.adoc` | Mission session en cours (max 70 lignes)
+| `.agents/INDEX.adoc` | Règles + sessions récentes + roadmap
+| `.agents/SESSIONS_HISTORY.adoc` | Tableau récapitulatif
+| `AGENT.adoc` | Ce fichier — Directives complètes
+|===
+
+== Anti-Patterns
+
+[cols="1,3,3,3"]
+|===
+| # | Anti-pattern | Symptôme | Correction
+| 1 | **Agent sans `opencode.json`** | L'agent démarre nu, pose des questions basiques déjà dans AGENT.adoc | `opencode.json` doit toujours contenir `"instructions": ["AGENT.adoc"]`
+| 2 | **PROMPT_REPRISE fantôme** | PROMPT_REPRISE existe mais n'est pas mis à jour en fin de session | L'étape 2 de la procédure de fin de session est obligatoire
+| 3 | **Archive vide** | Template avec placeholders "TODO" | Remplir intégralement à chaque session
+| 4 | **Session trop longue** | > 50 messages ou > 3 fichiers parallèles | Splitter. 5x20min > 1x2h.
+| 5 | **Split-brain .agents/** | .agents/ dupliqué dans racine et sous-projet | .agents/ est UNIQUE au niveau racine git. Les sous-projets n'ont PAS de gouvernance séparée.
+|===
+
+== Bootstrap d'un Nouveau Projet — 6 étapes
+
+Pour initialiser la gouvernance agent sur un projet vierge :
+
+. **opencode.json** — 6 lignes, `{ "instructions": ["AGENT.adoc"] }`. Toujours en premier.
+. **Dossiers** — `mkdir -p .agents/sessions/ .agents/archives/ .agents/encyclopedies/`
+. **AGENT.adoc** — fichier maître (~200-250 lignes) : règles absolues, structure projet, conventions, cercles de confiance
+. **PROMPT_REPRISE.adoc** — mission session 1 (max 70 lignes)
+. **Fichiers LAZY structurants** : INDEX.adoc (EAGER), SESSIONS_HISTORY.adoc, TEST_COVERAGE_ANALYSIS.adoc
+. **Portefeuille transverse** — ajouter le nouveau projet dans le tableau Portefeuille de TOUS les INDEX.adoc des autres projets ET dans `configuration/.agents/AGENT_GOVERNANCE.adoc`
