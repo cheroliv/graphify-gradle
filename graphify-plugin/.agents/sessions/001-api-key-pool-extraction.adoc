@@ -1,0 +1,39 @@
+= Session 001 — Palier 1 DESIGN_CI_LLM_POOL_ROTATION : Extraction N0 api-key-pool
+:author: cheroliv + opencode (deepseek-v4-pro)
+:date: 2026-05-10
+:type: feat
+:score: 10/10
+
+== Objectif
+Extraire le package `apikey/` de plantuml-gradle vers le module N0 partagé `:api-key-pool`
+dans graphify-gradle, conformément au DESIGN_CI_LLM_POOL_ROTATION.adoc Palier 1.
+
+== Livrables
+- `api-key-pool/` créé dans graphify-plugin avec 6 fichiers source
+- Package renommé : `plantuml.apikey` → `com.cheroliv.graphify.apikey`
+- 6 tests unitaires migrés avec package renommé
+- `build.gradle.kts` api-key-pool (java-library + kotlin jvm + JUnit5)
+- `settings.gradle.kts` mis à jour avec `include(":api-key-pool")`
+- 66/66 tests PASS (tests purs apikey, sans dépendances plantuml)
+
+== Décisions clés
+- 30 tests cross-cutting (ConfigLoaderApiKeyPoolTest, LlmServiceApiKeyPoolTest, LlmServiceAuditTest)
+  non extractibles — dépendent de PlantumlConfig et modèle de config plantuml-spécifique
+- Le "96" du design doc reste aspirant — atteignable quand plantuml-gradle pointera vers :api-key-pool
+- Module java-library (pas gradle-plugin) — pas d'implémentation Plugin<Project>
+
+== Fichiers créés/modifiés
+- api-key-pool/src/main/kotlin/com/cheroliv/graphify/apikey/ApiKeyPool.kt
+- api-key-pool/src/main/kotlin/com/cheroliv/graphify/apikey/Provider.kt
+- api-key-pool/src/main/kotlin/com/cheroliv/graphify/apikey/QuotaAuditLogger.kt
+- api-key-pool/src/main/kotlin/com/cheroliv/graphify/apikey/QuotaResetManager.kt
+- api-key-pool/src/main/kotlin/com/cheroliv/graphify/apikey/QuotaTracker.kt
+- api-key-pool/src/main/kotlin/com/cheroliv/graphify/apikey/models.kt
+- api-key-pool/src/test/kotlin/com/cheroliv/graphify/apikey/ApiKeyModelsTest.kt
+- api-key-pool/src/test/kotlin/com/cheroliv/graphify/apikey/ApiKeyPoolTest.kt
+- api-key-pool/src/test/kotlin/com/cheroliv/graphify/apikey/ProviderEnumsTest.kt
+- api-key-pool/src/test/kotlin/com/cheroliv/graphify/apikey/QuotaAuditLoggerTest.kt
+- api-key-pool/src/test/kotlin/com/cheroliv/graphify/apikey/QuotaResetManagerTest.kt
+- api-key-pool/src/test/kotlin/com/cheroliv/graphify/apikey/QuotaTrackerTest.kt
+- api-key-pool/build.gradle.kts
+- settings.gradle.kts (modifié: include api-key-pool)

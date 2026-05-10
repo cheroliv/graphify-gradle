@@ -6,8 +6,8 @@ _Projet_ : graphify-gradle/graphify-plugin — N0 (Scanner, zéro dépendance in
 _Ontologie spatiale_ : voir `configuration/.agents/AGENT_GOVERNANCE.adoc`
 
 _Création gouvernance_ : 2026-05-09
-_Session en cours_ : 000 — Bootstrap gouvernance agent
-_Prochaine session_ : 001 — GF-1 Tests unitaires (US-GF9 du PLAN_GLOBAL)
+_Session en cours_ : 001 — EPIC Pool Design : Extraction apikey en N0
+_Prochaine session_ : 002 — GF-1 Tests unitaires (US-GF9 du PLAN_GLOBAL)
 
 '''
 == REGLES ABSOLUES (resume)
@@ -36,7 +36,8 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 
 |===
 | EPIC | Description | Statut | Priorite
-| GF-0 | Bootstrap gouvernance agent | EN COURS | P0
+| GF-5 | Extraction api-key-pool N0 — 6 src + 6 tests (66 PASS) | ✅ TERMINE | P0
+| GF-0 | Bootstrap gouvernance agent | ✅ TERMINE (session 000) | P0
 | GF-1 | Tests unitaires — ScanWorkspaceTask, GraphModel sérialisation, exclusion patterns | A FAIRE | P0
 | GF-2 | Tests intégration — scan du workspace réel, validation format graph.json | A FAIRE | P0
 | GF-3 | Intégration engine/build.gradle.kts — consommation graph.json par N3 | A FAIRE | P1
@@ -48,7 +49,8 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 
 |===
 | # | Date | Type | Sujet | Score
-| 000 | 2026-05-09 | governance | Bootstrap gouvernance agent (.agents/ + AGENT.adoc + PROMPT_REPRISE) | -
+| 001 | 2026-05-10 | feat | Extraction apikey/ de plantuml-gradle → :api-key-pool N0 (6 src + 6 tests, 66/66 PASS) | 10/10
+| 000 | 2026-05-09 | governance | Bootstrap gouvernance agent (.agents/ + AGENT.adoc + PROMPT_REPRISE) | 10/10
 |===
 
 '''
