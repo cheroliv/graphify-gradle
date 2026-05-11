@@ -2,6 +2,7 @@
 
 |===
 | # | Date | Type | Sujet | Score
+| 003-correction | 2026-05-11 | fix | Migration gouvernance racine → graphify-plugin/ (pattern foundry standard) : AGENT.adoc + PROMPT_REPRISE.adoc + opencode.json + .agents/ déplacés de racine vers graphify-plugin/, AGENT.adoc réécrit avec chemins corrigés, INDEX.adoc mis à jour | 10/10
 | 002-cleanup | 2026-05-11 | fix | Cleanup nested path + Pattern A conversion + api-key-pool publishable + .agents/ cross-project tests : 30/30 (plugin) + 66/66 (api-key-pool) = 96/96 PASS | 10/10
 | 002 | 2026-05-11 | feat | A2 — Unification multi-projet + .agents/ racine + GF-1 Tests ScanWorkspaceTask : 27 tests (21 task + 6 model), 93/93 total PASS | 10/10
 | 001 | 2026-05-10 | feat | Extraction apikey/ de plantuml-gradle → :api-key-pool N0 : 6 src + 6 tests, package com.cheroliv.graphify.apikey, 66/66 PASS | 10/10

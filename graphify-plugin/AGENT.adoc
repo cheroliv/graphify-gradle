@@ -15,16 +15,15 @@
 
 == Avertissement — Racine de Travail
 
-**Ce fichier est dans `graphify-gradle/`**, la racine de travail du projet.
+**Ce fichier est dans `graphify-gradle/graphify-plugin/`**, la racine de travail du projet.
+Le répertoire parent `graphify-gradle/` est le consumer (dogfooding) + repo git. La gouvernance
+agent vit dans le sous-projet plugin, selon le pattern standard foundry.
 
-La racine du dépôt git (`graphify-gradle/`) contient le repo git ET les fichiers de build Gradle
-ET la gouvernance agent. Les sous-projets (`graphify-plugin/`, `api-key-pool/`) n'ont PAS
-de gouvernance agent séparée — `.agents/` est UNIQUE au niveau racine.
-
-* Les chemins dans ce fichier sont relatifs à **`graphify-gradle/`**
-* L'agent travaille depuis **`graphify-gradle/`**
-* `graphify-plugin/` et `api-key-pool/` sont des builds Gradle INDÉPENDANTS — Pattern A
-* Les commandes Gradle s'exécutent depuis chaque build indépendant
+* Les chemins dans ce fichier sont relatifs à **`graphify-gradle/graphify-plugin/`**
+* L'agent travaille depuis **`graphify-gradle/graphify-plugin/`**
+* `../` = `graphify-gradle/` (consumer root, dogfooding)
+* `../api-key-pool/` = lib N0 indépendante (sibling)
+* Les commandes Gradle s'exécutent depuis le répertoire courant (`./gradlew`)
 
 == Projet
 
@@ -99,42 +98,47 @@ _L'agent NE DOIT JAMAIS_ modifier, écraser ou supprimer un fichier personnel de
 
 == Architecture du Projet
 
-=== Structure (depuis la racine de travail = ce répertoire)
+=== Structure
+
+La gouvernance agent (`AGENT.adoc`, `PROMPT_REPRISE.adoc`, `.agents/`, `opencode.json`)
+vit dans le répertoire plugin : `graphify-gradle/graphify-plugin/`. C'est le pattern standard
+foundry (comme `plantuml-gradle/plantuml-plugin/`, `bakery-gradle/bakery-plugin/`).
 
 [source,bash]
 ----
-graphify-gradle/                     # ⭐ RACINE DE TRAVAIL + CONSUMER (dogfooding)
-├── AGENT.adoc                       # Directives complètes (ce fichier)
-├── PROMPT_REPRISE.adoc              # Mission session en cours (EAGER)
-├── opencode.json                    # Config opencode
-├── settings.gradle.kts              # Consumer settings (NO include())
-├── build.gradle.kts                 # Consumer build (apply com.cheroliv.graphify)
-├── gradle/                          # Wrapper + version catalog
-├── gradlew / gradlew.bat
+graphify-gradle/                     # CONSUMER (dogfooding) + repo git
+├── build.gradle.kts                 # apply plugin: com.cheroliv.graphify
+├── settings.gradle.kts              # NO include()
+├── gradlew / gradle/
 ├── .gitignore
-├── .agents/                         # Gouvernance agent (UNIQUE, niveau racine)
-│   ├── INDEX.adoc                   # Règles + sessions récentes + roadmap (EAGER)
-│   ├── SESSIONS_HISTORY.adoc        # Historique complet (EAGER)
-│   ├── SESSION_CHECKLIST.adoc       # Checklist ouverture/fermeture
-│   ├── TEST_COVERAGE_ANALYSIS.adoc  # Analyse couverture tests
-│   ├── sessions/                    # Archives par session
-│   ├── archives/                    # Archives mensuelles
-│   └── encyclopedies/               # Connaissance froide
-├── graphify-plugin/                 # BUILD INDÉPENDANT (Pattern A)
-│   ├── build.gradle.kts
+├── graphify-plugin/                 # ⭐ RACINE DE TRAVAIL + BUILD INDÉPENDANT
+│   ├── AGENT.adoc                   # Directives complètes (ce fichier)
+│   ├── PROMPT_REPRISE.adoc          # Mission session en cours (EAGER)
+│   ├── opencode.json                # Config opencode
+│   ├── build.gradle.kts             # Plugin build (java-gradle-plugin + maven-publish)
 │   ├── settings.gradle.kts          # rootProject.name = "graphify-plugin"
 │   ├── gradlew + gradle/            # Wrapper INDÉPENDANT
-│   └── src/main/kotlin/com/cheroliv/graphify/
-│       ├── GraphifyPlugin.kt        # Plugin Gradle — entry point
-│       ├── GraphifyExtension.kt     # Extension DSL
-│       ├── ScanWorkspaceTask.kt     # Tâche scanWorkspace — walk + extraction
-│       └── model/
-│           └── GraphModel.kt        # Data classes JSON
-└── api-key-pool/                    # BUILD INDÉPENDANT (Pattern A)
+│   ├── .agents/                     # Gouvernance agent
+│   │   ├── INDEX.adoc               # Règles + sessions récentes + roadmap (EAGER)
+│   │   ├── SESSIONS_HISTORY.adoc    # Historique complet (EAGER)
+│   │   ├── SESSION_CHECKLIST.adoc   # Checklist ouverture/fermeture
+│   │   ├── TEST_COVERAGE_ANALYSIS.adoc
+│   │   ├── sessions/                # Archives par session
+│   │   ├── archives/                # Archives mensuelles
+│   │   └── encyclopedies/           # Connaissance froide
+│   └── src/
+│       ├── main/kotlin/com/cheroliv/graphify/
+│       │   ├── GraphifyPlugin.kt    # Plugin Gradle — entry point
+│       │   ├── GraphifyExtension.kt # Extension DSL
+│       │   ├── ScanWorkspaceTask.kt # Tâche scanWorkspace — walk + extraction
+│       │   └── model/
+│       │       └── GraphModel.kt    # Data classes JSON
+│       └── test/                    # 30 tests (24 ScanWorkspaceTask + 6 GraphModel)
+└── api-key-pool/                    # BUILD INDÉPENDANT (sibling)
     ├── build.gradle.kts             # maven-publish + signing
     ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
     ├── gradlew + gradle/            # Wrapper INDÉPENDANT
-    └── src/main/kotlin/com/cheroliv/graphify/apikey/
+    └── src/                         # 66 tests, publishable
 ----
 
 === Composants Clés
@@ -143,24 +147,24 @@ graphify-gradle/                     # ⭐ RACINE DE TRAVAIL + CONSUMER (dogfood
 * **GraphifyExtension** : DSL — `rootDir`, `outputFile`, `excludePatterns`
 * **ScanWorkspaceTask** : Cœur du plugin — walk récursif (Files.walkFileTree), extraction nœuds/arêtes/communautés, sérialisation Jackson
 * **GraphModel** : Contrat JSON — GraphNode, GraphEdge, GraphCommunity
-* **api-key-pool** : Pool de clés API avec quota tracking/réinitialisation/journalisation
+* **api-key-pool** (`../api-key-pool/`) : Pool de clés API avec quota tracking/réinitialisation/journalisation
 
 === Commandes Utiles
 
 [source,shell]
 ----
-# Depuis graphify-plugin/ (build indépendant)
+# Depuis graphify-plugin/ (build plugin indépendant — répertoire courant)
 ./gradlew compileKotlin
 ./gradlew test                                  # 30 tests (24 ScanWorkspaceTask + 6 GraphModel)
 ./gradlew publishToMavenLocal                   # OBLIGATOIRE après modif code
 
-# Depuis api-key-pool/ (build indépendant)
-./gradlew compileKotlin
-./gradlew test                                  # 66 tests (ApiKeyPool + models + quota + audit)
-./gradlew publishToMavenLocal                   # Publie le jar N0
+# Depuis api-key-pool/ (build indépendant — sibling)
+../api-key-pool/gradlew compileKotlin -p ../api-key-pool
+../api-key-pool/gradlew test -p ../api-key-pool # 66 tests (ApiKeyPool + models + quota + audit)
+../api-key-pool/gradlew publishToMavenLocal -p ../api-key-pool
 
-# Depuis graphify-gradle/ (consumer)
-./gradlew scanWorkspace                         # Scan workspace → graph.json
+# Depuis graphify-gradle/ (consumer, parent)
+../gradlew scanWorkspace                        # Scan workspace → graph.json
 ----
 
 == Gestion du Contexte — CRITIQUE
@@ -175,8 +179,8 @@ graphify-gradle/                     # ⭐ RACINE DE TRAVAIL + CONSUMER (dogfood
 1. Lire `PROMPT_REPRISE.adoc` pour la mission en cours
 2. Lire `.agents/INDEX.adoc` pour les règles absolues
 3. `git status` — vérifier l'état du dépôt
-4. `cd graphify-plugin && ./gradlew compileKotlin` — vérifier que le plugin compile
-5. `cd api-key-pool && ./gradlew compileKotlin` — vérifier que le lib compile
+4. `./gradlew compileKotlin` — vérifier que le plugin compile
+5. `../api-key-pool/gradlew compileKotlin -p ../api-key-pool` — vérifier que le lib compile
 
 === Fin de Session
 
@@ -228,7 +232,8 @@ graphify-gradle/                     # ⭐ RACINE DE TRAVAIL + CONSUMER (dogfood
 | 2 | **PROMPT_REPRISE fantôme** | PROMPT_REPRISE existe mais n'est pas mis à jour en fin de session | L'étape 2 de la procédure de fin de session est obligatoire
 | 3 | **Archive vide** | Template avec placeholders "TODO" | Remplir intégralement à chaque session
 | 4 | **Session trop longue** | > 50 messages ou > 3 fichiers parallèles | Splitter. 5x20min > 1x2h.
-| 5 | **Split-brain .agents/** | .agents/ dupliqué dans racine et sous-projet | .agents/ est UNIQUE au niveau racine git. Les sous-projets n'ont PAS de gouvernance séparée.
+| 5 | **Split-brain .agents/** | .agents/ dupliqué dans racine et sous-projet | .agents/ est UNIQUE dans le sous-projet plugin (RACINE DE TRAVAIL). Jamais à la racine consumer.
+| 6 | **Gouvernance à la racine consumer** | AGENT.adoc/.agents/ dans graphify-gradle/ au lieu de graphify-plugin/ | Toujours dans le sous-projet plugin. Pattern standard foundry : plantuml-gradle/plantuml-plugin/, bakery-gradle/bakery-plugin/, graphify-gradle/graphify-plugin/.
 |===
 
 == Bootstrap d'un Nouveau Projet — 6 étapes

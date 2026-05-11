@@ -8,29 +8,37 @@ Amorçage pour la prochaine session opencode. GF-2 à attaquer.
 
 == Contexte de Reprise (EAGER)
 
+=== Ce qui a été accompli — Session 003-correction (11 mai 2026)
+
+- **Correction gouvernance** : migration des fichiers agent de la racine `graphify-gradle/` vers le sous-projet plugin `graphify-gradle/graphify-plugin/` (pattern foundry standard)
+  - `AGENT.adoc` déplacé racine → `graphify-plugin/`
+  - `PROMPT_REPRISE.adoc` déplacé racine → `graphify-plugin/`
+  - `opencode.json` déplacé racine → `graphify-plugin/`
+  - `.agents/` déplacé racine → `graphify-plugin/`
+  - AGENT.adoc réécrit avec les bons chemins (racine de travail = `graphify-plugin/`)
+  - INDEX.adoc réécrit avec la nouvelle architecture
+  - SESSIONS_HISTORY + SESSION_CHECKLIST conservés
+
 === Ce qui a été accompli — Session 002-cleanup (11 mai 2026)
 
-- **Nettoyage nested leak** : suppression `graphify-plugin/foundry/OSS/graphify-gradle/graphify-plugin/`
-- **Conversion Pattern A** : graphify-plugin + api-key-pool = builds indépendants (settings.gradle.kts + gradlew chacun)
-- **api-key-pool publishable** : maven-publish + signing configuré
-- **Root consumer-only** : apply plugin only, scanWorkspace task
-- **GF-1+ Tests** : 30 tests graphify-plugin (24 task + 6 model), 66 tests api-key-pool, 96/96 total PASS
-- **Tests .agents/ cross-project** : 3 nouveaux tests pour références multi-subproject
+- Nettoyage nested leak, conversion Pattern A, api-key-pool publishable, 96/96 PASS
 
-=== Architecture actuelle — Pattern A (convention foundry)
+=== Architecture actuelle — Pattern foundry standard
 
 [source]
 ----
-graphify-gradle/                     # Consumer (dogfooding)
+graphify-gradle/                     # Consumer (dogfooding) + repo git
 ├── build.gradle.kts                 # apply plugin: com.cheroliv.graphify
 ├── settings.gradle.kts              # NO include()
 ├── gradlew + gradle/                # Wrapper consumer
-├── .agents/                         # GOUVERNANCE UNIQUE
-├── graphify-plugin/                 # BUILD INDÉPENDANT
-│   ├── settings.gradle.kts          # rootProject.name = "graphify-plugin"
+├── graphify-plugin/                 # ⭐ RACINE DE TRAVAIL + BUILD INDÉPENDANT
+│   ├── AGENT.adoc                   # Directives agent
+│   ├── PROMPT_REPRISE.adoc          # Ce fichier
+│   ├── opencode.json                # Config opencode
+│   ├── .agents/                     # GOUVERNANCE
 │   ├── gradlew + gradle/            # Wrapper INDÉPENDANT
 │   └── src/                         # 30 tests ✅
-└── api-key-pool/                    # BUILD INDÉPENDANT
+└── api-key-pool/                    # BUILD INDÉPENDANT (sibling)
     ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
     ├── gradlew + gradle/            # Wrapper INDÉPENDANT
     └── src/                         # 66 tests ✅, publishable
@@ -60,5 +68,5 @@ graphify-gradle/                     # Consumer (dogfooding)
 . Règle 4bis : DAG inter-plugins N0→N1→N2→N3 — graphify est N0
 
 [.text-right]
-*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 002-cleanup.*
+*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 003-correction (migration gouvernance).*
 *Prochaine session : 003 — GF-2 Tests intégration.*

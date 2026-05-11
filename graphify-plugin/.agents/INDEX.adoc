@@ -5,7 +5,7 @@ _Règles absolues_ : voir `AGENT.adoc`
 _Projet_ : graphify-gradle — N0 (Scanner, zéro dépendance inter-plugin)
 _Ontologie spatiale_ : voir `configuration/.agents/AGENT_GOVERNANCE.adoc`
 
-_Création gouvernance racine_ : 2026-05-11 (Session A2 — Unification multi-projet)
+_Création gouvernance_ : 2026-05-11 (Session A2 — Unification multi-projet)
 _Session en cours_ : 003 — GF-2 Tests intégration (scan workspace réel, validation graph.json)
 _Session précédente_ : 002-cleanup — Cleanup nested path + Pattern A + .agents/ tests cross-project (TERMINÉ, 96/96 PASS)
 
@@ -19,34 +19,33 @@ _Session précédente_ : 002-cleanup — Cleanup nested path + Pattern A + .agen
 === 3. PROCÉDURE DE FIN DE SESSION — 6 ÉTAPES OBLIGATOIRES
 
 '''
-== Architecture Multi-Module (unifiée)
+== Architecture — Pattern foundry standard (gouvernance dans le sous-projet plugin)
 
 [source]
 ----
-graphify-gradle/                     # RACINE GIT + CONSUMER (dogfooding)
-├── AGENT.adoc                       # Directives agent
-├── PROMPT_REPRISE.adoc              # Mission session en cours
-├── opencode.json                    # Config opencode
-├── settings.gradle.kts              # Root settings (consumer-only, NO include())
-├── build.gradle.kts                 # Consumer build (apply com.cheroliv.graphify)
-├── gradle/                          # Wrapper + version catalog
-├── gradlew / gradlew.bat
+graphify-gradle/                     # CONSUMER (dogfooding) + repo git
+├── build.gradle.kts                 # apply plugin: com.cheroliv.graphify
+├── settings.gradle.kts              # NO include()
+├── gradlew + gradle/                # Wrapper consumer
 ├── .gitignore
-├── .agents/                         # GOUVERNANCE RACINE (unique)
-│   ├── INDEX.adoc                   # Ce fichier
-│   ├── SESSIONS_HISTORY.adoc        # Historique consolidé
-│   ├── SESSION_CHECKLIST.adoc       # Checklist ouverture/fermeture
-│   ├── TEST_COVERAGE_ANALYSIS.adoc  # Analyse couverture
-│   ├── sessions/                    # Archives par session
-│   ├── archives/                    # Archives mensuelles
-│   └── encyclopedies/               # Connaissance froide
-├── graphify-plugin/                 # BUILD INDÉPENDANT (Pattern A)
+├── graphify-plugin/                 # ⭐ RACINE DE TRAVAIL + BUILD INDÉPENDANT
+│   ├── AGENT.adoc                   # Directives agent
+│   ├── PROMPT_REPRISE.adoc          # Mission session en cours
+│   ├── opencode.json                # Config opencode
 │   ├── settings.gradle.kts          # rootProject.name = "graphify-plugin"
 │   ├── gradlew + gradle/            # Wrapper INDÉPENDANT
+│   ├── .agents/                     # GOUVERNANCE (dans le plugin)
+│   │   ├── INDEX.adoc               # Ce fichier
+│   │   ├── SESSIONS_HISTORY.adoc    # Historique consolidé
+│   │   ├── SESSION_CHECKLIST.adoc   # Checklist ouverture/fermeture
+│   │   ├── TEST_COVERAGE_ANALYSIS.adoc
+│   │   ├── sessions/                # Archives par session
+│   │   ├── archives/                # Archives mensuelles
+│   │   └── encyclopedies/           # Connaissance froide
 │   └── src/
 │       ├── main/kotlin/com/cheroliv/graphify/
 │       └── test/                    # 30 tests (24 ScanWorkspaceTask + 6 GraphModel)
-└── api-key-pool/                    # BUILD INDÉPENDANT (Pattern A)
+└── api-key-pool/                    # BUILD INDÉPENDANT (sibling)
     ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
     ├── gradlew + gradle/            # Wrapper INDÉPENDANT
     └── src/                         # 66 tests, publishable
@@ -74,7 +73,8 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 | EPIC | Description | Statut | Priorité
 | GF-5 | Extraction api-key-pool N0 — 6 src + 6 tests (66 PASS), publishable indépendant (Pattern A) | ✅ TERMINÉ (sessions 001, 002-cleanup) | P0
 | GF-0 | Bootstrap gouvernance agent | ✅ TERMINÉ (session 000) | P0
-| A2.1 | Unification Pattern A — builds indépendants (consumer + plugin + api-key-pool), .agents/ racine unique, suppression nested leak | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
+| GF-0.1 | Correction gouvernance — migration .agents/ racine → graphify-plugin/ (pattern foundry standard) | ✅ TERMINÉ (session 003-correction) | P0
+| A2.1 | Unification Pattern A — builds indépendants (consumer + plugin + api-key-pool), suppression nested leak | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
 | GF-1 | Tests unitaires — ScanWorkspaceTask (24 tests incl. .agents/ cross-project) + GraphModel (6 tests) = 30/30 PASS | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
 | GF-2 | Tests intégration — scan du workspace réel, validation format graph.json | À FAIRE | P0
 | GF-3 | Intégration engine/build.gradle.kts — consommation graph.json par N3 | À FAIRE | P1
@@ -86,6 +86,7 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 
 |===
 | # | Date | Type | Sujet | Score
+| 003-correction | 2026-05-11 | fix | Migration gouvernance racine → graphify-plugin/ (pattern foundry standard) | —
 | 003 | 2026-05-12 | feat | GF-2 — Tests intégration (scan workspace réel, validation graph.json) | —
 | 002-cleanup | 2026-05-11 | fix | Cleanup nested path + Pattern A conversion + api-key-pool publishable + .agents/ cross-project tests (96/96 PASS) | 10/10
 | 002 | 2026-05-11 | feat | A2 — Unification multi-projet + .agents/ racine + GF-1 Tests ScanWorkspaceTask (93/93 PASS) | 10/10
@@ -102,7 +103,7 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 | magic_stick | `foundry/OSS/magic_stick/` | N2 | 64+
 | bakery-gradle | `foundry/OSS/bakery-gradle/bakery-plugin/` | N2 | 13+
 | codebase-gradle | `foundry/OSS/codebase-gradle/` | N1 | 7+
-| graphify-gradle | `foundry/OSS/graphify-gradle/` | N0 | 4
+| graphify-gradle | `foundry/OSS/graphify-gradle/graphify-plugin/` | N0 | 5
 | engine | `foundry/OSS/engine/` | N3 | 2+
 |===
 

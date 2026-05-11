@@ -1,0 +1,44 @@
+= Session 003-correction — Migration gouvernance racine → graphify-plugin/
+:date: 2026-05-11
+:type: fix
+:score: 10/10
+
+== Contexte
+
+La gouvernance agent (`AGENT.adoc`, `PROMPT_REPRISE.adoc`, `.agents/`, `opencode.json`) était placée à la racine `graphify-gradle/` au lieu du sous-projet plugin `graphify-gradle/graphify-plugin/`. Ce n'est pas le pattern standard foundry.
+
+Pattern attendu (références : `plantuml-gradle/plantuml-plugin/`, `bakery-gradle/bakery-plugin/`) : la gouvernance vit dans le sous-projet plugin.
+
+== Actions
+
+. Déplacement physique :
+  - `graphify-gradle/AGENT.adoc` → `graphify-gradle/graphify-plugin/AGENT.adoc`
+  - `graphify-gradle/PROMPT_REPRISE.adoc` → `graphify-gradle/graphify-plugin/PROMPT_REPRISE.adoc`
+  - `graphify-gradle/opencode.json` → `graphify-gradle/graphify-plugin/opencode.json`
+  - `graphify-gradle/.agents/` → `graphify-gradle/graphify-plugin/.agents/`
+
+. Réécriture `AGENT.adoc` :
+  - Avertissement racine de travail mis à jour : `graphify-gradle/graphify-plugin/`
+  - Structure projet corrigée : gouvernance dans le plugin, pas à la racine
+  - Commandes Gradle ajustées (répertoire courant = graphify-plugin/)
+  - Anti-patterns : ajout anti-pattern #6 (gouvernance à la racine consumer)
+  - Procedure début de session : suppression des `cd`, utilisation directe de `./gradlew`
+
+. Mise à jour `INDEX.adoc` :
+  - Architecture reflète le pattern foundry standard
+  - Ajout EPIC GF-0.1 (correction gouvernance)
+  - Chemin portefeuille mis à jour : `foundry/OSS/graphify-gradle/graphify-plugin/`
+
+. Mise à jour `PROMPT_REPRISE.adoc` :
+  - Section accompli 003-correction ajoutée
+  - Architecture corrigée
+
+. Mise à jour `SESSIONS_HISTORY.adoc` :
+  - Entrée 003-correction ajoutée
+
+== Résultat
+
+- Racine `graphify-gradle/` : consumer propre (dogfooding), zéro gouvernance agent
+- Plugin `graphify-plugin/` : gouvernance complète + build indépendant
+- Compilation OK
+- Pattern conforme à plantuml-gradle et bakery-gradle
