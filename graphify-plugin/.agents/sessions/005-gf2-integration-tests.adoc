@@ -1,0 +1,58 @@
+= Rapport Session 005 — GF-2 Tests Intégration
+
+:author: cheroliv + opencode (deepseek-v4-pro)
+:date: 2026-05-11
+:session: 005
+:epic: GF-2
+:status: TERMINÉ
+:score: 44/44 PASS
+
+== Résumé
+
+Tests d'intégration `graphify-gradle` terminés. 14 nouveaux tests `ScanWorkspaceIntegrationTest.kt`.
+Scan du workspace réel réussi (203k nodes, 188k edges, 26 communautés, 4m51s).
+Total : 44/44 tests PASS (30 unitaires + 14 intégration).
+
+== Tests créés
+
+|===
+| Classe | Tests | Description
+| `ScanWorkspaceIntegrationTest.kt` | 14 tests | 4 groupes (Nested classes)
+
+| `MultiBoroughCommunityDetection` | 3 | 6 boroughs détectés, assignation par repo, tailles correctes
+| `CrossProjectEdges` | 3 | agent_reference inter-boroughs, import edges, contains edges
+| `ExclusionVerification` | 3 | build/.gradle/.git/node_modules/.idea/target exclus, nesting profond, patterns custom multi-borough
+| `OutputValidation` | 4 | JSON valide multi-borough, projets gradle/maven/npm, déterministe, large workspace 10 boroughs
+| `WorkspaceMimic` | 1 | Structure foundry/office/config avec INDEX.adoc référençant autres boroughs
+|===
+
+== Scan workspace réel
+
+[source,json]
+----
+Nodes:        203,204
+Edges:        188,365
+Communities:  26
+Temps:        4m 51s
+Taille:       98 MB
+----
+
+Répartition edges :
+- `contains`: 181,971
+- `import`: 901
+- `reference`: 4,113
+- `agent_reference`: 1,380
+
+Communautés détectées (top 10) : office (3,608), newpipe-gradle (800), edster (163), plantuml-gradle (128), payment-scaffold-gradle (87), configuration (77), bakery-gradle (57), magic_stick (49), slider-gradle (30), jhipster-gradle-plugins (24).
+
+6 boroughs confirmés présents : planner-gradle, codex-gradle, codebase-gradle, quizz-benchmark-gradle, magic_stick, engine.
+
+Exclusions effectives : 310 faux positifs (patterns `selective_build`, `codebuild`, `live-build` — aucun vrai dossier `build/` détecté parmi les nodes).
+
+== Code modifié
+
+- `src/test/kotlin/com/cheroliv/graphify/ScanWorkspaceIntegrationTest.kt` — créé (14 tests, ~270 lignes)
+
+== Prochaine session — 006 GF-3
+
+Intégration engine/build.gradle.kts : consommation du graph.json par le niveau N3.

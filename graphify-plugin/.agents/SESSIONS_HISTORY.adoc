@@ -2,6 +2,7 @@
 
 |===
 | # | Date | Type | Sujet | Score
+| 005 | 2026-05-11 | feat | GF-2 — Tests intégration : 14 tests ScanWorkspaceIntegrationTest (multi-borough communities, cross-project edges, exclusion verification, output validation, workspace mimic). Scan workspace réel : 203 204 nodes, 188 365 edges, 26 communautés, 4m51s, 98MB. 6 boroughs confirmés. Total : 44/44 PASS. | 10/10
 | 004 | 2026-05-11 | chore | Mise à jour langchain4j 1.12.x → 1.14.1 globale : 10 libs.versions.toml dans 9 repos (codebase, slider, codex, jhipster, plantuml x2, newpipe, readme, planner, edster). langchain4j-beta 1.12.2-beta22 → 1.14.1-beta24 | 10/10
 | 003-correction | 2026-05-11 | fix | Migration gouvernance racine → graphify-plugin/ (pattern foundry standard) : AGENT.adoc + PROMPT_REPRISE.adoc + opencode.json + .agents/ déplacés de racine vers graphify-plugin/, AGENT.adoc réécrit avec chemins corrigés, INDEX.adoc mis à jour | 10/10
 | 002-cleanup | 2026-05-11 | fix | Cleanup nested path + Pattern A conversion + api-key-pool publishable + .agents/ cross-project tests : 30/30 (plugin) + 66/66 (api-key-pool) = 96/96 PASS | 10/10

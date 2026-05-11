@@ -1,67 +1,44 @@
-= PROMPT_REPRISE — Session 005 — Graphify Gradle
+= PROMPT_REPRISE — Session 006 — Graphify Gradle
 :author: cheroliv + opencode (deepseek-v4-pro)
 :date: 2026-05-11
-:session: 005
+:session: 006
 
 [abstract]
-Amorçage pour la prochaine session opencode. GF-2 à attaquer.
+Amorçage pour la prochaine session opencode. GF-3 à attaquer.
 
-== Contexte de Reprise (EAGER)
+== Ce qui a été accompli — Session 005 (11 mai 2026)
 
-=== Ce qui a été accompli — Session 004 (11 mai 2026)
+- **GF-2 Tests intégration** : 14 tests `ScanWorkspaceIntegrationTest.kt`
+  - Multi-borough community detection (6 repos git détectés)
+  - Cross-project edges (agent_reference, import, contains inter-boroughs)
+  - Exclusion verification (build/.gradle/.git/node_modules/.idea/target + patterns custom)
+  - Output validation (JSON valide, déterministe, large workspace 10 boroughs)
+  - Workspace mimic (foundry/office/config avec INDEX.adoc)
 
-- **Mise à jour langchain4j** : montée de version globale dans 10 `libs.versions.toml` (9 repos)
-  - `langchain4j = "1.14.1"` (toutes occurrences)
-  - `langchain4j-beta = "1.14.1-beta24"` (toutes occurrences)
+- **Scan workspace réel** : 203,204 nodes, 188,365 edges, 26 communautés, 4m51s, 98MB
+- Total : **44/44 PASS** (30 unitaires + 14 intégration)
 
-=== Ce qui a été accompli — Session 003-correction (11 mai 2026)
+== Mission du Jour — Session 006
 
-- Migration gouvernance racine → graphify-plugin/ (pattern foundry standard)
+=== Objectif prioritaire : GF-3 — Intégration engine N3
 
-=== Architecture actuelle — Pattern foundry standard
-
-[source]
-----
-graphify-gradle/                     # Consumer (dogfooding) + repo git
-├── build.gradle.kts                 # apply plugin: com.cheroliv.graphify
-├── settings.gradle.kts              # NO include()
-├── gradlew + gradle/                # Wrapper consumer
-├── graphify-plugin/                 # ⭐ RACINE DE TRAVAIL + BUILD INDÉPENDANT
-│   ├── AGENT.adoc                   # Directives agent
-│   ├── PROMPT_REPRISE.adoc          # Ce fichier
-│   ├── opencode.json                # Config opencode
-│   ├── .agents/                     # GOUVERNANCE
-│   ├── gradlew + gradle/            # Wrapper INDÉPENDANT
-│   └── src/                         # 30 tests ✅
-└── api-key-pool/                    # BUILD INDÉPENDANT (sibling)
-    ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
-    ├── gradlew + gradle/            # Wrapper INDÉPENDANT
-    └── src/                         # 66 tests ✅, publishable
-----
-
-== Mission du Jour — Session 005
-
-=== Objectif prioritaire : GF-2 — Tests intégration
-
-. Scanner le workspace réel (`/home/cheroliv/workspace/`)
-. Valider structure graph.json produite (nœuds, arêtes, communautés)
-. Vérifier que les 6 boroughs + CSS apparaissent comme communautés
-. Vérifier exclusion effective dans un scan réel
-. Mesurer performance (taille graph.json, temps de scan)
+. Ajouter consommation du graph.json dans `engine/build.gradle.kts`
+. Créer une tâche Gradle dans engine qui lit le graph.json produit par graphify
+. Valider le DAG N0→N3 : graphify-gradle scanWorkspace → engine aggregateGraph
+. Vérifier que les métadonnées du graph (communautés, edges, nodes) sont exploitables côté engine
 
 === Objectifs secondaires
 
-- Chaque build indépendant doit compiler avec son propre gradlew
-- Viser 5+ tests intégration
+- Publier le plugin sur Gradle Plugin Portal (GF-4)
+- Maintenir 44/44 PASS ou mieux
 
-== Rappel — Règles Globales (EAGER)
+== Rappel — Règles Globales
 
 . Règle 0 : publishToMavenLocal OBLIGATOIRE après modif code source
 . Règle 1 : Aucun commit sans permission explicite
 . Règle 1b : Backup avant modif fichier config non versionné
 . Règle 2 : Pas de ./gradlew test en fin de session sans permission
-. Règle 4bis : DAG inter-plugins N0→N1→N2→N3 — graphify est N0
 
 [.text-right]
-*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 004 (langchain4j 1.14.1).*
-*Prochaine session : 005 — GF-2 Tests intégration.*
+*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 005 (GF-2 intégration tests).*
+*Prochaine session : 006 — GF-3 Intégration engine N3.*

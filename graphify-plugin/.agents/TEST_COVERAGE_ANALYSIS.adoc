@@ -1,26 +1,37 @@
 = Test Coverage Analysis — Graphify Gradle
 
-_Statut_ : GF-1 TERMINÉ (sessions 002, 002-cleanup), GF-2 à faire (session 003)
+_Statut_ : GF-2 TERMINÉ (session 005), GF-3 à faire (session 006)
 
 == Couverture actuelle
 
 |===
 | Module | Tests | Couverture
 | api-key-pool | 66/66 PASS ✅ | 100% (6 classes testées)
-| graphify-plugin | 30/30 PASS ✅ | Couvre ScanWorkspaceTask (24 tests) + GraphModel (6 tests)
+| graphify-plugin | 44/44 PASS ✅ | ScanWorkspaceTask (24 unitaires) + ScanWorkspaceIntegrationTest (14 intégration) + GraphModel (6)
 |===
 
-Total : 96/96 PASS ✅
+Total : 110/110 PASS ✅
 
 == Tests par composant (graphify-plugin)
 
 |===
 | Fichier | Tests | Couvre
-| `ScanWorkspaceTaskTest.kt` | 24 tests | Exclusions (6+1), nœuds (file/dir/project), arêtes (contains/import/reference/agent_reference), communautés, JSON round-trip, empty workspace, .agents/INDEX.adoc cross-project (3 tests)
-| `GraphModelTest.kt` | 6 tests | Sérialisation/désérialisation Jackson, valeurs par défaut, NON_NULL labels, GraphCommunity
+| `ScanWorkspaceTaskTest.kt` | 24 unitaires | Exclusions (6+1), nœuds (file/dir/project), arêtes (contains/import/reference/agent_reference), communautés, JSON round-trip, empty workspace, .agents/INDEX.adoc cross-project (3 tests)
+| `ScanWorkspaceIntegrationTest.kt` | 14 intégration | Multi-borough detection (3), cross-project edges (3), exclusion verification (3), output validation (4), workspace mimic (1)
+| `GraphModelTest.kt` | 6 | Sérialisation/désérialisation Jackson, valeurs par défaut, NON_NULL labels, GraphCommunity
 |===
+
+== Scan workspace réel (validation GF-2)
+
+[source]
+----
+Nodes:        203,204
+Edges:        188,365
+Communities:  26 (dont les 6 boroughs : planner-gradle, codex-gradle, codebase-gradle, quizz-benchmark-gradle, magic_stick, engine)
+Temps:        4m 51s
+Taille:       98 MB
+----
 
 == Prochaine étape
 
-Session 003 — GF-2 : Tests intégration sur workspace réel.
-Cible : 5+ tests (scan complet, validation boroughs/communautés, performance, exclusion réelle).
+Session 006 — GF-3 : Intégration engine N3 (consommation graph.json par le DAG N3).
