@@ -10,6 +10,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.FileVisitResult
@@ -20,6 +21,7 @@ import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*
 
+@DisableCachingByDefault(because = "File system scan varies between environments")
 open class ScanWorkspaceTask : DefaultTask() {
 
     @get:Internal
