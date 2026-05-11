@@ -1,6 +1,6 @@
 = PROMPT_REPRISE — Session 003 — Graphify Gradle
 :author: cheroliv + opencode (deepseek-v4-pro)
-:date: 2026-05-12
+:date: 2026-05-11
 :session: 003
 
 [abstract]
@@ -8,26 +8,32 @@ Amorçage pour la prochaine session opencode. GF-2 à attaquer.
 
 == Contexte de Reprise (EAGER)
 
-=== Ce qui a été accompli — Session 002 (11 mai 2026)
+=== Ce qui a été accompli — Session 002-cleanup (11 mai 2026)
 
-- **A2.1 — Unification multi-projet** : api-key-pool sibling, unique gradlew/settings, .agents/ racine unique
-- **A2.2 — Gouvernance** : AGENT.adoc, PROMPT_REPRISE.adoc, opencode.json, INDEX.adoc, SESSIONS_HISTORY, SESSION_CHECKLIST, TEST_COVERAGE_ANALYSIS, archives au niveau racine
-- **GF-1 — Tests unitaires** : 27 tests (ScanWorkspaceTask 21 + GraphModel 6), 27/27 PASS
-- **Corrections** : exclusion robuste (excludedDirNames + custom patterns), resolveImportToDir par Files.isDirectory, ObjectMapper NON_NULL, extractNodes unifié project/directory
-- **Total** : 93 tests (27 graphify-plugin + 66 api-key-pool), 93/93 PASS ✅
+- **Nettoyage nested leak** : suppression `graphify-plugin/foundry/OSS/graphify-gradle/graphify-plugin/`
+- **Conversion Pattern A** : graphify-plugin + api-key-pool = builds indépendants (settings.gradle.kts + gradlew chacun)
+- **api-key-pool publishable** : maven-publish + signing configuré
+- **Root consumer-only** : apply plugin only, scanWorkspace task
+- **GF-1+ Tests** : 30 tests graphify-plugin (24 task + 6 model), 66 tests api-key-pool, 96/96 total PASS
+- **Tests .agents/ cross-project** : 3 nouveaux tests pour références multi-subproject
 
-=== Architecture actuelle
+=== Architecture actuelle — Pattern A (convention foundry)
 
 [source]
 ----
-graphify-gradle/                     # RACINE UNIQUE
-├── AGENT.adoc / PROMPT_REPRISE.adoc / opencode.json
-├── settings.gradle.kts              # :graphify-plugin, :api-key-pool
-├── build.gradle.kts                 # id("base")
-├── gradle/                          # libs.versions.toml complet
+graphify-gradle/                     # Consumer (dogfooding)
+├── build.gradle.kts                 # apply plugin: com.cheroliv.graphify
+├── settings.gradle.kts              # NO include()
+├── gradlew + gradle/                # Wrapper consumer
 ├── .agents/                         # GOUVERNANCE UNIQUE
-├── graphify-plugin/                 # 27 tests ✅
-└── api-key-pool/                    # 66 tests ✅
+├── graphify-plugin/                 # BUILD INDÉPENDANT
+│   ├── settings.gradle.kts          # rootProject.name = "graphify-plugin"
+│   ├── gradlew + gradle/            # Wrapper INDÉPENDANT
+│   └── src/                         # 30 tests ✅
+└── api-key-pool/                    # BUILD INDÉPENDANT
+    ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
+    ├── gradlew + gradle/            # Wrapper INDÉPENDANT
+    └── src/                         # 66 tests ✅, publishable
 ----
 
 == Mission du Jour — Session 003
@@ -42,7 +48,7 @@ graphify-gradle/                     # RACINE UNIQUE
 
 === Objectifs secondaires
 
-- `./gradlew :graphify-plugin:publishToMavenLocal` après modifs
+- Chaque build indépendant doit compiler avec son propre gradlew
 - Viser 5+ tests intégration
 
 == Rappel — Règles Globales (EAGER)
@@ -54,5 +60,5 @@ graphify-gradle/                     # RACINE UNIQUE
 . Règle 4bis : DAG inter-plugins N0→N1→N2→N3 — graphify est N0
 
 [.text-right]
-*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 002.*
+*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 002-cleanup.*
 *Prochaine session : 003 — GF-2 Tests intégration.*

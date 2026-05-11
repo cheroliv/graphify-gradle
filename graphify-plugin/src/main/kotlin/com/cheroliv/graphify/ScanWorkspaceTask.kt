@@ -259,7 +259,7 @@ open class ScanWorkspaceTask : DefaultTask() {
     }
 
     private fun extractAgentReferences(content: String): List<String> {
-        val regex = Regex("""[\w-]+/[\w-]+(?:/[\w-]+)*""")
+        val regex = Regex("""[\w.-]+/[\w.-]+(?:/[\w.-]+)*""")
         return regex.findAll(content)
             .map { it.value }
             .filter { it.contains("/") }

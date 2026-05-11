@@ -1,22 +1,22 @@
 = Test Coverage Analysis — Graphify Gradle
 
-_Statut_ : GF-1 TERMINÉ (session 002), GF-2 à faire (session 003)
+_Statut_ : GF-1 TERMINÉ (sessions 002, 002-cleanup), GF-2 à faire (session 003)
 
 == Couverture actuelle
 
 |===
 | Module | Tests | Couverture
 | api-key-pool | 66/66 PASS ✅ | 100% (6 classes testées)
-| graphify-plugin | 27/27 PASS ✅ | Couvre ScanWorkspaceTask (21 tests) + GraphModel (6 tests)
+| graphify-plugin | 30/30 PASS ✅ | Couvre ScanWorkspaceTask (24 tests) + GraphModel (6 tests)
 |===
 
-Total : 93/93 PASS ✅
+Total : 96/96 PASS ✅
 
 == Tests par composant (graphify-plugin)
 
 |===
 | Fichier | Tests | Couvre
-| `ScanWorkspaceTaskTest.kt` | 21 tests | Exclusions (6+1), nœuds (file/dir/project), arêtes (contains/import/reference/agent_reference), communautés, JSON round-trip, empty workspace
+| `ScanWorkspaceTaskTest.kt` | 24 tests | Exclusions (6+1), nœuds (file/dir/project), arêtes (contains/import/reference/agent_reference), communautés, JSON round-trip, empty workspace, .agents/INDEX.adoc cross-project (3 tests)
 | `GraphModelTest.kt` | 6 tests | Sérialisation/désérialisation Jackson, valeurs par défaut, NON_NULL labels, GraphCommunity
 |===
 

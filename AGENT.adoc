@@ -23,7 +23,8 @@ de gouvernance agent séparée — `.agents/` est UNIQUE au niveau racine.
 
 * Les chemins dans ce fichier sont relatifs à **`graphify-gradle/`**
 * L'agent travaille depuis **`graphify-gradle/`**
-* Les commandes Gradle s'exécutent depuis **`graphify-gradle/`**
+* `graphify-plugin/` et `api-key-pool/` sont des builds Gradle INDÉPENDANTS — Pattern A
+* Les commandes Gradle s'exécutent depuis chaque build indépendant
 
 == Projet
 
@@ -102,12 +103,12 @@ _L'agent NE DOIT JAMAIS_ modifier, écraser ou supprimer un fichier personnel de
 
 [source,bash]
 ----
-graphify-gradle/                     # ⭐ RACINE DE TRAVAIL (ce répertoire)
+graphify-gradle/                     # ⭐ RACINE DE TRAVAIL + CONSUMER (dogfooding)
 ├── AGENT.adoc                       # Directives complètes (ce fichier)
 ├── PROMPT_REPRISE.adoc              # Mission session en cours (EAGER)
 ├── opencode.json                    # Config opencode
-├── settings.gradle.kts              # Root settings (:graphify-plugin, :api-key-pool)
-├── build.gradle.kts                 # Root build (base plugin)
+├── settings.gradle.kts              # Consumer settings (NO include())
+├── build.gradle.kts                 # Consumer build (apply com.cheroliv.graphify)
 ├── gradle/                          # Wrapper + version catalog
 ├── gradlew / gradlew.bat
 ├── .gitignore
@@ -119,16 +120,20 @@ graphify-gradle/                     # ⭐ RACINE DE TRAVAIL (ce répertoire)
 │   ├── sessions/                    # Archives par session
 │   ├── archives/                    # Archives mensuelles
 │   └── encyclopedies/               # Connaissance froide
-├── graphify-plugin/                 # :graphify-plugin (plugin Gradle)
+├── graphify-plugin/                 # BUILD INDÉPENDANT (Pattern A)
 │   ├── build.gradle.kts
+│   ├── settings.gradle.kts          # rootProject.name = "graphify-plugin"
+│   ├── gradlew + gradle/            # Wrapper INDÉPENDANT
 │   └── src/main/kotlin/com/cheroliv/graphify/
 │       ├── GraphifyPlugin.kt        # Plugin Gradle — entry point
 │       ├── GraphifyExtension.kt     # Extension DSL
 │       ├── ScanWorkspaceTask.kt     # Tâche scanWorkspace — walk + extraction
 │       └── model/
 │           └── GraphModel.kt        # Data classes JSON
-└── api-key-pool/                    # :api-key-pool (pool de clés API, N0)
-    ├── build.gradle.kts
+└── api-key-pool/                    # BUILD INDÉPENDANT (Pattern A)
+    ├── build.gradle.kts             # maven-publish + signing
+    ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
+    ├── gradlew + gradle/            # Wrapper INDÉPENDANT
     └── src/main/kotlin/com/cheroliv/graphify/apikey/
 ----
 
@@ -144,15 +149,18 @@ graphify-gradle/                     # ⭐ RACINE DE TRAVAIL (ce répertoire)
 
 [source,shell]
 ----
-# Depuis la racine de travail (graphify-gradle/)
+# Depuis graphify-plugin/ (build indépendant)
 ./gradlew compileKotlin
-./gradlew :graphify-plugin:publishToMavenLocal    # OBLIGATOIRE après modif code
-./gradlew :graphify-plugin:test                    # Tests graphify-plugin
-./gradlew :api-key-pool:test                       # Tests api-key-pool
-./gradlew test                                     # Tous les tests
+./gradlew test                                  # 30 tests (24 ScanWorkspaceTask + 6 GraphModel)
+./gradlew publishToMavenLocal                   # OBLIGATOIRE après modif code
 
-# Tâche principale
-./gradlew :graphify-plugin:scanWorkspace           # Scan → graph.json
+# Depuis api-key-pool/ (build indépendant)
+./gradlew compileKotlin
+./gradlew test                                  # 66 tests (ApiKeyPool + models + quota + audit)
+./gradlew publishToMavenLocal                   # Publie le jar N0
+
+# Depuis graphify-gradle/ (consumer)
+./gradlew scanWorkspace                         # Scan workspace → graph.json
 ----
 
 == Gestion du Contexte — CRITIQUE
@@ -167,7 +175,8 @@ graphify-gradle/                     # ⭐ RACINE DE TRAVAIL (ce répertoire)
 1. Lire `PROMPT_REPRISE.adoc` pour la mission en cours
 2. Lire `.agents/INDEX.adoc` pour les règles absolues
 3. `git status` — vérifier l'état du dépôt
-4. `./gradlew compileKotlin` — vérifier que le build compile avant de coder
+4. `cd graphify-plugin && ./gradlew compileKotlin` — vérifier que le plugin compile
+5. `cd api-key-pool && ./gradlew compileKotlin` — vérifier que le lib compile
 
 === Fin de Session
 

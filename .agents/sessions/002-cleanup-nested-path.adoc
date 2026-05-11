@@ -1,0 +1,79 @@
+= Session 002 — Cleanup Nested Artifact Path + Unification
+:author: cheroliv + opencode (deepseek-v4-pro)
+:date: 2026-05-11
+:session: 002-cleanup
+
+== Résumé
+
+Session corrective : le nested `graphify-plugin/foundry/OSS/graphify-gradle/graphify-plugin/`
+(leak de build) subsistait après la session 002 originale. Correction + conversion Pattern A.
+
+== Actions Effectuées
+
+=== 1. Nettoyage Nested Leak
+- `rm -rf graphify-plugin/foundry/` — coquilles vides non trackées par git
+- Supprime la chaîne de dossiers: foundry/OSS/graphify-gradle/graphify-plugin/gradle/wrapper
+
+=== 2. Conversion Pattern A — graphify-plugin/
+- Ajout `settings.gradle.kts` (rootProject.name = "graphify-plugin")
+- Ajout `gradlew` + `gradle/wrapper/` (wrapper jar + properties, Gradle 9.5.0)
+- Ajout `gradle/libs.versions.toml` (catalogue de versions local)
+- Build indépendant confirmé ✅
+
+=== 3. Conversion Pattern A — api-key-pool/
+- Ajout `settings.gradle.kts` (rootProject.name = "api-key-pool")
+- Ajout `gradlew` + `gradle/wrapper/` (wrapper jar + properties, Gradle 9.5.0)
+- Ajout `gradle/libs.versions.toml`
+- Ajout `maven-publish` + `signing` dans build.gradle.kts
+- Publication indépendante configurée ✅
+- 66/66 PASS ✅
+
+=== 4. Conversion Pattern A — root graphify-gradle/
+- `settings.gradle.kts` : suppression des `include()` (plus de multi-module)
+- `build.gradle.kts` : consumer-only → applique `com.cheroliv.graphify`
+- Tâche `scanWorkspace` disponible ✅
+
+=== 5. Tests .agents/INDEX.adoc Cross-Project
+- 3 nouveaux tests ScanWorkspaceTaskTest :
+  * `should detect agent references across multiple subproject agents directories`
+  * `should detect agent references from root level agents INDEX to subprojects`
+  * `should link agent references from correct source INDEX adoc files`
+- Correction regex `extractAgentReferences` : supporte les dots (`.agents`, `.adoc`)
+- 30/30 PASS (24 ScanWorkspaceTask + 6 GraphModel) ✅
+
+=== 6. Vérification
+- graphify-plugin compile + 30/30 PASS ✅
+- api-key-pool compile + 66/66 PASS ✅
+- graphify-plugin publishToMavenLocal ✅
+- Root consumer scanWorkspace task disponible ✅
+- Aucun secret détecté ✅
+
+== Résultat Final — Architecture Pattern A
+
+[source]
+----
+graphify-gradle/                     # Consumer (dogfooding)
+├── build.gradle.kts                 # apply plugin: com.cheroliv.graphify
+├── settings.gradle.kts              # rootProject.name, NO include()
+├── gradlew + gradle/                # Wrapper consumer
+├── .agents/                         # Gouvernance UNIQUE
+├── graphify-plugin/                 # Build INDÉPENDANT
+│   ├── settings.gradle.kts          # rootProject.name = "graphify-plugin"
+│   ├── gradlew + gradle/            # Wrapper INDÉPENDANT
+│   └── src/                         # 30 tests ✅
+└── api-key-pool/                    # Build INDÉPENDANT
+    ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
+    ├── gradlew + gradle/            # Wrapper INDÉPENDANT
+    └── src/                         # 66 tests ✅, publishable
+----
+
+== Stats
+
+|===
+| Métrique | Valeur
+| Tests graphify-plugin | 30/30 PASS (24 task + 6 model)
+| Tests api-key-pool | 66/66 PASS
+| Total tests | 96/96 PASS ✅
+| Builds indépendants | 3 (consumer + plugin + api-key-pool)
+| Pattern | A — conforme bakery/plantuml/readme/quizz-benchmark
+|===

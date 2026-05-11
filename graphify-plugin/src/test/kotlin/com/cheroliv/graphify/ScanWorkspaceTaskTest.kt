@@ -312,6 +312,100 @@ class ScanWorkspaceTaskTest {
     }
 
     @Test
+    fun `should detect agent references across multiple subproject agents directories`() {
+        val projA = tempDir.resolve("proj-a")
+        projA.createDirectories()
+        projA.resolve(".git").createDirectories()
+        writeFilePath(projA, ".agents/INDEX.adoc",
+            """
+            = INDEX — ProjA
+            References proj-b/config and proj-c/lib
+            """.trimIndent()
+        )
+
+        val projB = tempDir.resolve("proj-b")
+        projB.createDirectories()
+        projB.resolve(".git").createDirectories()
+        writeFilePath(projB, ".agents/INDEX.adoc",
+            """
+            = INDEX — ProjB
+            Consumed by proj-a/.agents/INDEX
+            """.trimIndent()
+        )
+
+        val projC = tempDir.resolve("proj-c")
+        projC.createDirectories()
+        projC.resolve(".git").createDirectories()
+        writeFilePath(projC, ".agents/INDEX.adoc",
+            """
+            = INDEX — ProjC
+            See proj-a/AGENT.adoc and proj-b/build.gradle.kts
+            """.trimIndent()
+        )
+
+        task.scan()
+
+        val graph = parseOutput()
+        val agentRefEdges = graph.edges.filter { it.type == "agent_reference" }
+        assertThat(agentRefEdges).isNotEmpty
+        val targets = agentRefEdges.map { it.target }
+        assertThat(targets).anyMatch { it.contains("proj-b/config") }
+        assertThat(targets).anyMatch { it.contains("proj-c/lib") }
+        assertThat(targets).anyMatch { it.contains("proj-a/.agents/INDEX") }
+        assertThat(targets).anyMatch { it.contains("proj-a/AGENT.adoc") }
+        assertThat(targets).anyMatch { it.contains("proj-b/build.gradle.kts") }
+    }
+
+    @Test
+    fun `should detect agent references from root level agents INDEX to subprojects`() {
+        writeFile(".agents/INDEX.adoc",
+            """
+            = INDEX
+            Portefeuille:
+            - graphify-gradle in foundry/OSS/graphify-gradle
+            - engine in foundry/OSS/engine
+            - bakery-gradle in foundry/OSS/bakery-gradle
+            """.trimIndent()
+        )
+
+        task.scan()
+
+        val graph = parseOutput()
+        val agentRefEdges = graph.edges.filter { it.type == "agent_reference" }
+        assertThat(agentRefEdges).isNotEmpty
+        val targets = agentRefEdges.map { it.target }
+        assertThat(targets).anyMatch { it.contains("foundry/OSS/graphify-gradle") }
+        assertThat(targets).anyMatch { it.contains("foundry/OSS/engine") }
+        assertThat(targets).anyMatch { it.contains("foundry/OSS/bakery-gradle") }
+    }
+
+    @Test
+    fun `should link agent references from correct source INDEX adoc files`() {
+        val projA = tempDir.resolve("project-alpha")
+        projA.createDirectories()
+        projA.resolve(".git").createDirectories()
+        writeFilePath(projA, ".agents/INDEX.adoc", "Ref: project-beta/core")
+
+        val projB = tempDir.resolve("project-beta")
+        projB.createDirectories()
+        projB.resolve(".git").createDirectories()
+        writeFilePath(projB, ".agents/INDEX.adoc", "Ref: project-alpha/api")
+
+        task.scan()
+
+        val graph = parseOutput()
+        val agentRefEdges = graph.edges.filter { it.type == "agent_reference" }
+
+        val fromAlpha = agentRefEdges.filter { it.source.startsWith("project-alpha") }
+        assertThat(fromAlpha).isNotEmpty
+        assertThat(fromAlpha.first().target).isEqualTo("project-beta/core")
+
+        val fromBeta = agentRefEdges.filter { it.source.startsWith("project-beta") }
+        assertThat(fromBeta).isNotEmpty
+        assertThat(fromBeta.first().target).isEqualTo("project-alpha/api")
+    }
+
+    @Test
     fun `should serialize and deserialize graph model round trip`() {
         writeFile("file.txt")
 
