@@ -1,27 +1,22 @@
-= PROMPT_REPRISE — Session 003 — Graphify Gradle
+= PROMPT_REPRISE — Session 005 — Graphify Gradle
 :author: cheroliv + opencode (deepseek-v4-pro)
 :date: 2026-05-11
-:session: 003
+:session: 005
 
 [abstract]
 Amorçage pour la prochaine session opencode. GF-2 à attaquer.
 
 == Contexte de Reprise (EAGER)
 
+=== Ce qui a été accompli — Session 004 (11 mai 2026)
+
+- **Mise à jour langchain4j** : montée de version globale dans 10 `libs.versions.toml` (9 repos)
+  - `langchain4j = "1.14.1"` (toutes occurrences)
+  - `langchain4j-beta = "1.14.1-beta24"` (toutes occurrences)
+
 === Ce qui a été accompli — Session 003-correction (11 mai 2026)
 
-- **Correction gouvernance** : migration des fichiers agent de la racine `graphify-gradle/` vers le sous-projet plugin `graphify-gradle/graphify-plugin/` (pattern foundry standard)
-  - `AGENT.adoc` déplacé racine → `graphify-plugin/`
-  - `PROMPT_REPRISE.adoc` déplacé racine → `graphify-plugin/`
-  - `opencode.json` déplacé racine → `graphify-plugin/`
-  - `.agents/` déplacé racine → `graphify-plugin/`
-  - AGENT.adoc réécrit avec les bons chemins (racine de travail = `graphify-plugin/`)
-  - INDEX.adoc réécrit avec la nouvelle architecture
-  - SESSIONS_HISTORY + SESSION_CHECKLIST conservés
-
-=== Ce qui a été accompli — Session 002-cleanup (11 mai 2026)
-
-- Nettoyage nested leak, conversion Pattern A, api-key-pool publishable, 96/96 PASS
+- Migration gouvernance racine → graphify-plugin/ (pattern foundry standard)
 
 === Architecture actuelle — Pattern foundry standard
 
@@ -44,7 +39,7 @@ graphify-gradle/                     # Consumer (dogfooding) + repo git
     └── src/                         # 66 tests ✅, publishable
 ----
 
-== Mission du Jour — Session 003
+== Mission du Jour — Session 005
 
 === Objectif prioritaire : GF-2 — Tests intégration
 
@@ -68,5 +63,5 @@ graphify-gradle/                     # Consumer (dogfooding) + repo git
 . Règle 4bis : DAG inter-plugins N0→N1→N2→N3 — graphify est N0
 
 [.text-right]
-*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 003-correction (migration gouvernance).*
-*Prochaine session : 003 — GF-2 Tests intégration.*
+*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 004 (langchain4j 1.14.1).*
+*Prochaine session : 005 — GF-2 Tests intégration.*

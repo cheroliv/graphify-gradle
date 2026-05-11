@@ -1,0 +1,38 @@
+= Session 004 — Mise à jour langchain4j 1.12.x → 1.14.1 dans tout le workspace
+:date: 2026-05-11
+:type: chore
+:score: 10/10
+
+== Contexte
+
+Montée de version globale de langchain4j dans tous les `libs.versions.toml` du workspace :
+- `langchain4j` → "1.14.1"
+- `langchain4j-beta` → "1.14.1-beta24"
+
+== Actions
+
+Fichiers modifiés (10 `libs.versions.toml` dans 9 repos) :
+
+[cols="3,3,5"]
+|===
+| Projet | Fichier | Changement
+| codebase-gradle | `gradle/libs.versions.toml` | 1.12.2 → 1.14.1 ; beta 1.12.2-beta22 → 1.14.1-beta24
+| slider-gradle | `slider-plugin/gradle/libs.versions.toml` | 1.12.1 → 1.14.1 ; beta 1.12.2-beta22 → 1.14.1-beta24
+| codex-gradle | `gradle/libs.versions.toml` | 1.12.2 → 1.14.1 ; beta 1.12.2-beta22 → 1.14.1-beta24
+| jhipster-gradle-plugins | `gradle/libs.versions.toml` | 1.12.1 → 1.14.1 ; beta 1.12.2-beta22 → 1.14.1-beta24
+| plantuml-gradle | `plantuml-plugin/gradle/libs.versions.toml` | 1.12.2 → 1.14.1 ; beta 1.12.2-beta22 → 1.14.1-beta24
+| plantuml-gradle | `plantuml-plugin/plantuml-api/gradle/libs.versions.toml` | 1.0.0-alpha1 → 1.14.1
+| newpipe-gradle | `mp3-organizer/gradle/libs.versions.toml` | 1.12.2 → 1.14.1
+| readme-gradle | `readme-plugin/gradle/libs.versions.toml` | 1.12.1 → 1.14.1 ; beta 1.12.2-beta22 → 1.14.1-beta24
+| planner-gradle | `gradle/libs.versions.toml` | 1.0.0-beta1 → 1.14.1
+| edster | `__codebase__/gradle/libs.versions.toml` | 1.10.0 → 1.14.1
+|===
+
+Toutes les occurrences non commentées de `langchain4j` dans le workspace sont maintenant à "1.14.1".
+Toutes les occurrences de `langchain4j-beta` sont maintenant à "1.14.1-beta24".
+
+== Résultat
+
+- 10 fichiers modifiés, 9 repos impactés
+- Zéro version 1.12.x résiduelle pour langchain4j
+- Aucun build cassé (éditions purement textuelles de versions)

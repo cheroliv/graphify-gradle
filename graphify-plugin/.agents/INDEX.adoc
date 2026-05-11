@@ -6,8 +6,8 @@ _Projet_ : graphify-gradle — N0 (Scanner, zéro dépendance inter-plugin)
 _Ontologie spatiale_ : voir `configuration/.agents/AGENT_GOVERNANCE.adoc`
 
 _Création gouvernance_ : 2026-05-11 (Session A2 — Unification multi-projet)
-_Session en cours_ : 003 — GF-2 Tests intégration (scan workspace réel, validation graph.json)
-_Session précédente_ : 002-cleanup — Cleanup nested path + Pattern A + .agents/ tests cross-project (TERMINÉ, 96/96 PASS)
+_Session en cours_ : 005 — GF-2 Tests intégration (scan workspace réel, validation graph.json)
+_Session précédente_ : 004 — Mise à jour langchain4j 1.14.1 dans tout le workspace (chore, TERMINÉ, 10 fichiers / 9 repos)
 
 '''
 == RÈGLES ABSOLUES (résumé)
@@ -74,6 +74,7 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 | GF-5 | Extraction api-key-pool N0 — 6 src + 6 tests (66 PASS), publishable indépendant (Pattern A) | ✅ TERMINÉ (sessions 001, 002-cleanup) | P0
 | GF-0 | Bootstrap gouvernance agent | ✅ TERMINÉ (session 000) | P0
 | GF-0.1 | Correction gouvernance — migration .agents/ racine → graphify-plugin/ (pattern foundry standard) | ✅ TERMINÉ (session 003-correction) | P0
+| GF-0.2 | Mise à jour langchain4j 1.14.1 globale (10 libs.versions.toml / 9 repos) | ✅ TERMINÉ (session 004) | P0
 | A2.1 | Unification Pattern A — builds indépendants (consumer + plugin + api-key-pool), suppression nested leak | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
 | GF-1 | Tests unitaires — ScanWorkspaceTask (24 tests incl. .agents/ cross-project) + GraphModel (6 tests) = 30/30 PASS | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
 | GF-2 | Tests intégration — scan du workspace réel, validation format graph.json | À FAIRE | P0
@@ -86,8 +87,9 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 
 |===
 | # | Date | Type | Sujet | Score
-| 003-correction | 2026-05-11 | fix | Migration gouvernance racine → graphify-plugin/ (pattern foundry standard) | —
-| 003 | 2026-05-12 | feat | GF-2 — Tests intégration (scan workspace réel, validation graph.json) | —
+| 005 | 2026-05-12 | feat | GF-2 — Tests intégration (scan workspace réel, validation graph.json) | —
+| 004 | 2026-05-11 | chore | Mise à jour langchain4j 1.14.1 globale (10 libs.versions.toml / 9 repos) | 10/10
+| 003-correction | 2026-05-11 | fix | Migration gouvernance racine → graphify-plugin/ (pattern foundry standard) | 10/10
 | 002-cleanup | 2026-05-11 | fix | Cleanup nested path + Pattern A conversion + api-key-pool publishable + .agents/ cross-project tests (96/96 PASS) | 10/10
 | 002 | 2026-05-11 | feat | A2 — Unification multi-projet + .agents/ racine + GF-1 Tests ScanWorkspaceTask (93/93 PASS) | 10/10
 | 001 | 2026-05-10 | feat | Extraction apikey/ de plantuml-gradle → :api-key-pool N0 (6 src + 6 tests, 66/66 PASS) | 10/10
@@ -103,7 +105,7 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 | magic_stick | `foundry/OSS/magic_stick/` | N2 | 64+
 | bakery-gradle | `foundry/OSS/bakery-gradle/bakery-plugin/` | N2 | 13+
 | codebase-gradle | `foundry/OSS/codebase-gradle/` | N1 | 7+
-| graphify-gradle | `foundry/OSS/graphify-gradle/graphify-plugin/` | N0 | 5
+| graphify-gradle | `foundry/OSS/graphify-gradle/graphify-plugin/` | N0 | 6
 | engine | `foundry/OSS/engine/` | N3 | 2+
 |===
 
