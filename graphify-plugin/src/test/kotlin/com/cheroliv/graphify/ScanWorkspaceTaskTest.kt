@@ -234,7 +234,7 @@ class ScanWorkspaceTaskTest {
             """
             = INDEX
             References: configuration/.agents/AGENT_GOVERNANCE.adoc
-            and foundry/OSS/graphify-gradle
+            and foundry/public/graphify-gradle
             """.trimIndent()
         )
 
@@ -362,9 +362,9 @@ class ScanWorkspaceTaskTest {
             """
             = INDEX
             Portefeuille:
-            - graphify-gradle in foundry/OSS/graphify-gradle
-            - engine in foundry/OSS/engine
-            - bakery-gradle in foundry/OSS/bakery-gradle
+            - graphify-gradle in foundry/public/graphify-gradle
+            - engine in foundry/public/engine
+            - bakery-gradle in foundry/public/bakery-gradle
             """.trimIndent()
         )
 
@@ -374,9 +374,9 @@ class ScanWorkspaceTaskTest {
         val agentRefEdges = graph.edges.filter { it.type == "agent_reference" }
         assertThat(agentRefEdges).isNotEmpty
         val targets = agentRefEdges.map { it.target }
-        assertThat(targets).anyMatch { it.contains("foundry/OSS/graphify-gradle") }
-        assertThat(targets).anyMatch { it.contains("foundry/OSS/engine") }
-        assertThat(targets).anyMatch { it.contains("foundry/OSS/bakery-gradle") }
+        assertThat(targets).anyMatch { it.contains("foundry/public/graphify-gradle") }
+        assertThat(targets).anyMatch { it.contains("foundry/public/engine") }
+        assertThat(targets).anyMatch { it.contains("foundry/public/bakery-gradle") }
     }
 
     @Test

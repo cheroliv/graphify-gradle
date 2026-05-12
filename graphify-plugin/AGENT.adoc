@@ -42,7 +42,7 @@ bakery-gradle (page architecture), engine (agrégation N3).
 
 === Contexte — Cercles de Confiance
 
-Ce projet vit dans `foundry/OSS/graphify-gradle/` → *cercle 4 (public, Apache 2.0)*.
+Ce projet vit dans `foundry/public/graphify-gradle/` → *cercle 4 (public, Apache 2.0)*.
 - Ne pas référencer de secrets ici (ils sont dans `configuration/`, cercle 1)
 - La racine scannée est le workspace (`/home/cheroliv/workspace`) — contient cercle 0/1/2
 - Voir `configuration/.agents/AGENT_GOVERNANCE.adoc` pour l'ontologie spatiale complète
@@ -208,9 +208,9 @@ graphify-gradle/                     # CONSUMER (dogfooding) + repo git
 
 |===
 | Projet | Chemin | Rôle
-| plantuml-gradle | `/home/cheroliv/workspace/foundry/OSS/plantuml-gradle/plantuml-plugin` | Plugin Gradle mature — référence principale
-| bakery-gradle | `/home/cheroliv/workspace/foundry/OSS/bakery-gradle/bakery-plugin` | Plugin Gradle convention-based
-| codebase-gradle | `/home/cheroliv/workspace/foundry/OSS/codebase-gradle` | Plugin Gradle — RAG pgvector
+| plantuml-gradle | `/home/cheroliv/workspace/foundry/public/plantuml-gradle/plantuml-plugin` | Plugin Gradle mature — référence principale
+| bakery-gradle | `/home/cheroliv/workspace/foundry/public/bakery-gradle/bakery-plugin` | Plugin Gradle convention-based
+| codebase-gradle | `/home/cheroliv/workspace/foundry/public/codebase-gradle` | Plugin Gradle — RAG pgvector
 |===
 
 == Fichiers EAGER (chargés automatiquement)

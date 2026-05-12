@@ -117,7 +117,7 @@ class ScanWorkspaceIntegrationTest {
             writeFilePath(engine, ".agents/INDEX.adoc",
                 """
                 = INDEX — Engine
-                Portefeuille: graphify-gradle in foundry/OSS/graphify-gradle
+                Portefeuille: graphify-gradle in foundry/public/graphify-gradle
                 Consumes plantuml-gradle output
                 """.trimIndent()
             )
@@ -150,7 +150,7 @@ class ScanWorkspaceIntegrationTest {
             assertThat(agentRefEdges).isNotEmpty
 
             val targets = agentRefEdges.map { it.target }.toSet()
-            assertThat(targets).anyMatch { it.contains("foundry/OSS/graphify-gradle") }
+            assertThat(targets).anyMatch { it.contains("foundry/public/graphify-gradle") }
             assertThat(targets).anyMatch { it.contains("engine/AGENT.adoc") }
         }
 
@@ -402,7 +402,7 @@ class ScanWorkspaceIntegrationTest {
                 writeFilePath(root, ".agents/INDEX.adoc",
                     """
                     = INDEX — $proj
-                    Portefeuille: foundry/OSS/engine and foundry/OSS/plantuml-gradle
+                    Portefeuille: foundry/public/engine and foundry/public/plantuml-gradle
                     Config: configuration/.agents/AGENT_GOVERNANCE.adoc
                     """.trimIndent()
                 )
@@ -415,7 +415,7 @@ class ScanWorkspaceIntegrationTest {
             writeFilePath(office, ".agents/INDEX.adoc",
                 """
                 = INDEX — Office
-                Consumed by foundry/OSS/bakery-gradle and foundry/OSS/engine
+                Consumed by foundry/public/bakery-gradle and foundry/public/engine
                 References configuration/.agents/AGENT_GOVERNANCE.adoc
                 """.trimIndent()
             )

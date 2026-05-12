@@ -35,7 +35,7 @@ class ScanAndVerifyIntegrationTest {
         @Test
         fun `should produce valid graph json then verify DAG with no violations`() {
             val ws = tempDir.resolve("ws1")
-            val fd = ws.resolve("foundry/OSS")
+            val fd = ws.resolve("foundry/public")
             fd.createDirectories()
             graphOutput = tempDir.resolve("g1.json")
 
@@ -63,7 +63,7 @@ class ScanAndVerifyIntegrationTest {
         @Test
         fun `should produce valid graph then detect DAG violation`() {
             val ws = tempDir.resolve("ws2")
-            val fd = ws.resolve("foundry/OSS")
+            val fd = ws.resolve("foundry/public")
             fd.createDirectories()
             graphOutput = tempDir.resolve("g2.json")
 
@@ -95,7 +95,7 @@ class ScanAndVerifyIntegrationTest {
         @Test
         fun `should validate graph json contract for engine consumption`() {
             val ws = tempDir.resolve("ws3")
-            val fd = ws.resolve("foundry/OSS")
+            val fd = ws.resolve("foundry/public")
             fd.createDirectories()
             graphOutput = tempDir.resolve("g3.json")
 
