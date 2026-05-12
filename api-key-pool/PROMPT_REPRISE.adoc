@@ -1,0 +1,45 @@
+= PROMPT_REPRISE — Session 000 — Api Key Pool
+:author: cheroliv + opencode (deepseek-v4-pro)
+:date: 2026-05-12
+:session: 000
+
+[abstract]
+Amorçage gouvernance agent. Projet extrait de plantuml-gradle en session 001
+et intégré comme sibling de graphify-plugin. Zéro gouvernance formelle jusqu'ici.
+
+== Ce qui existe déjà
+
+- 6 fichiers source dans `src/main/kotlin/com/cheroliv/graphify/apikey/`
+- 6 classes de test (66/66 PASS)
+- build.gradle.kts avec maven-publish + signing
+- build indépendant (settings.gradle.kts + gradlew own)
+
+== Mission du Jour — Session 000
+
+=== Objectif unique : Bootstrap gouvernance agent
+
+. opencode.json
+. AGENT.adoc (~200 lignes)
+. PROMPT_REPRISE.adoc (ce fichier)
+. .agents/INDEX.adoc
+. .agents/SESSION_CHECKLIST.adoc
+. .agents/SESSIONS_HISTORY.adoc
+. .agents/TEST_COVERAGE_ANALYSIS.adoc
+. .agents/archives/COMPLETED_TASKS_ARCHIVE_2026-05.adoc
+
+== Roadmap future
+
+- APK-1 : Tests intégration multi-provider
+- APK-2 : Support quotas réels (RateLimit headers parsing)
+- APK-3 : Stratégies de rotation avancées (round-robin pondéré, least-used)
+- APK-4 : Publication Maven Central
+
+== Rappel — Règles Globales
+
+. Aucun commit sans permission explicite
+. Pas de tests en fin de session sans permission
+. Zéro secret/token dans le code
+
+[.text-right]
+*PROMPT_REPRISE créé le 12 mai 2026 — Session 000 Bootstrap Gouvernance.*
+*Prochaine session : 001 — APK-1 Tests intégration multi-provider.*

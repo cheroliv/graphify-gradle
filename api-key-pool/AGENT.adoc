@@ -1,0 +1,216 @@
+= Api Key Pool — Directives Agent
+:toc: left
+:toclevels: 3
+:icons: font
+:sectnums:
+
+[CAUTION]
+====
+**ARRÊT OBLIGATOIRE** avant `rm`, `Write` (écrasement), ou suppression de fichier :
+1. LIRE le fichier en entier
+2. VÉRIFIER `git ls-files -- <fichier>` (si pas dans git = pas de retour possible)
+3. DEMANDER confirmation fichier par fichier à l'utilisateur
+4. ATTENDRE "oui" avant d'agir
+====
+
+== Avertissement — Racine de Travail
+
+**Ce fichier est dans `graphify-gradle/api-key-pool/`**, la racine de travail du projet.
+Le répertoire racine du repo git est `graphify-gradle/`. La gouvernance vit dans le
+sous-projet api-key-pool, selon le pattern standard foundry.
+
+* Les chemins dans ce fichier sont relatifs à **`graphify-gradle/api-key-pool/`**
+* L'agent travaille depuis **`graphify-gradle/api-key-pool/`**
+* `../` = `graphify-gradle/` (racine repo git)
+* `../graphify-plugin/` = plugin sibling
+* Les commandes Gradle s'exécutent depuis le répertoire courant (`./gradlew`)
+
+== Projet
+
+**Nom** : api-key-pool — librairie N0 partagée de pool de clés API LLM
+**Stack** : Kotlin, Gradle (maven-publish + signing)
+**DAG** : N0 — zéro dépendance inter-plugin. Consommée par tous les plugins qui appellent des LLM.
+**Documentation** : AsciiDoc
+
+=== Objectif
+
+Gérer un pool de clés API pour fournisseurs LLM (Ollama, OpenAI, DeepSeek, etc.)
+avec rotation intelligente, tracking de quotas, réinitialisation périodique,
+et journalisation d'audit. Librairie pure sans état externe.
+
+=== Contexte — Cercles de Confiance
+
+Ce projet vit dans `foundry/public/graphify-gradle/api-key-pool/` → *cercle 4 (public, Apache 2.0)*.
+- Ne pas référencer de secrets ici (ils sont dans `configuration/`, cercle 1)
+- Les clés API réelles NE DOIVENT JAMAIS apparaître dans ce projet
+- Voir `configuration/.agents/AGENT_GOVERNANCE.adoc` pour l'ontologie spatiale complète
+
+== Règles Absolues
+
+=== Git
+
+**INTERDICTION FORMELLE** de commit/push/merge sans permission explicite de l'utilisateur.
+
+Commandes autorisées (lecture seule) : `git status`, `git diff`, `git log`, `git show`
+Commandes interdites (sauf ordre) : `git add`, `git commit`, `git push`, `git merge`, `git rebase`
+
+=== Tests
+
+L'agent NE DOIT JAMAIS lancer de tests (`./gradlew test`, etc.) en fin de session SANS permission explicite.
+
+=== Sécurité
+
+* Jamais de secrets en dur dans le code
+* Jamais de credentials dans les fichiers de config
+* Jamais de tokens API commités dans Git
+* Les clés API sont référencées par leur ID/provier, pas par leur valeur
+
+=== Fichiers de configuration — RÈGLE ABSOLUE DE SÛRETÉ
+
+**PRINCIPE** : Tout fichier de configuration (YAML, JSON, XML, TOML, properties, .env, etc.)
+peut contenir des données sensibles non versionnées.
+
+**INTERDICTIONS** :
+
+* **NE JAMAIS écraser** un fichier de configuration existant avec un `Write` complet
+* **NE JAMAIS remplacer** des valeurs sensibles existantes par des placeholders
+* **NE JAMAIS modifier** un fichier sans avoir **d'abord** vérifié `git check-ignore <fichier>`
+
+**Procédure OBLIGATOIRE** avant modification d'un fichier de configuration :
+
+. `git check-ignore <fichier>` : Vérifier si le fichier est versionné
+. `git ls-files -- <fichier>` : Confirmer s'il est tracké
+. Si le fichier **n'est pas tracké** : **CRÉER UNE SAUVEGARDE** avant toute modification
+. Si le fichier contient des valeurs sensibles : les **PRÉSERVER intactes**
+. Privilégier **l'edit partiel** plutôt que **l'écriture complète**
+. Après modification : **vérifier** que les valeurs sensibles sont toujours présentes
+
+=== Fichiers personnels — Interdiction de modifier
+
+L'agent NE DOIT JAMAIS modifier `~/.gitconfig`, `~/.bashrc`, `~/.ssh/config`, `~/.zshrc`, etc.
+SANS permission explicite.
+
+=== Méthodologie de Travail
+
+* **1 fichier à la fois** : Modifier un seul fichier avant de passer au suivant
+* **Validation immédiate** : Compiler après chaque modification
+* **Contexte léger** : Maximum 50k tokens EAGER (~3000 lignes)
+* **Règle d'or** : Mieux vaut 5 sessions de 20 minutes qu'une session de 2 heures
+
+== Architecture du Projet
+
+[source,bash]
+----
+graphify-gradle/                     # REPO GIT (consumer)
+├── graphify-plugin/                 # Plugin Gradle N0 (sibling)
+│   └── .agents/                     # Gouvernance graphify-plugin
+├── api-key-pool/                    # ⭐ RACINE DE TRAVAIL — LIB N0 INDÉPENDANTE
+│   ├── AGENT.adoc                   # Directives complètes (ce fichier)
+│   ├── PROMPT_REPRISE.adoc          # Mission session en cours (EAGER)
+│   ├── opencode.json                # Config opencode
+│   ├── build.gradle.kts             # java-library + maven-publish + signing
+│   ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
+│   ├── gradlew + gradle/
+│   ├── .agents/                     # Gouvernance agent
+│   │   ├── INDEX.adoc               # Roadmap + statut EPICs (EAGER)
+│   │   ├── SESSIONS_HISTORY.adoc    # Historique complet (EAGER)
+│   │   ├── SESSION_CHECKLIST.adoc   # Checklist ouverture/fermeture
+│   │   ├── TEST_COVERAGE_ANALYSIS.adoc
+│   │   ├── sessions/                # Archives par session
+│   │   ├── archives/                # Archives mensuelles
+│   │   └── encyclopedies/           # Connaissance froide
+│   └── src/
+│       ├── main/kotlin/com/cheroliv/graphify/apikey/
+│       │   ├── ApiKeyPool.kt        # Pool de clés
+│       │   ├── QuotaTracker.kt      # Tracking quotas
+│       │   ├── QuotaResetManager.kt # Réinitialisation périodique
+│       │   ├── QuotaAuditLogger.kt  # Journalisation d'audit
+│       │   ├── models.kt            # Data classes
+│       │   └── Provider.kt          # Enum fournisseurs
+│       └── test/                    # 66 tests (6 classes)
+└── settings.gradle.kts              # Consumer-only
+----
+
+=== Composants Clés
+
+* **ApiKeyPool** : Cœur — rotation de clés, sélection par quota disponible
+* **QuotaTracker** : Suivi des appels par clé, détection dépassement
+* **QuotaResetManager** : Réinitialisation périodique (daily/monthly)
+* **QuotaAuditLogger** : Journalisation structurée des événements pool
+* **Provider** : Enum fournisseurs (OLLAMA, OPENAI, DEEPSEEK, ANTHROPIC, GEMINI)
+* **models** : Data classes (ApiKey, QuotaInfo, PoolState, AuditEvent, QuotaReset)
+
+=== Commandes Utiles
+
+[source,shell]
+----
+# Depuis api-key-pool/ (répertoire courant)
+./gradlew compileKotlin
+./gradlew test                                  # 66 tests
+./gradlew publishToMavenLocal
+----
+
+== Gestion du Contexte — CRITIQUE
+
+* **`PROMPT_REPRISE.adoc`** → mission de la session en cours
+* **`.agents/INDEX.adoc`** → roadmap et statut des EPICs (EAGER)
+
+== Session Procedure
+
+=== Début de Session
+
+1. Lire `PROMPT_REPRISE.adoc` pour la mission en cours
+2. Lire `.agents/INDEX.adoc` pour les règles absolues + roadmap
+3. `git status` — vérifier l'état du dépôt
+4. `./gradlew compileKotlin` — vérifier que la lib compile
+
+=== Fin de Session
+
+**Procédure obligatoire en 6 étapes** :
+
+1. **Créer l'archive LAZY** : `.agents/sessions/{N}-{type}-{sujet}.adoc`
+2. **Mettre à jour PROMPT_REPRISE.adoc** — Mission N+1 (max 70 lignes)
+3. **Mettre à jour SESSIONS_HISTORY.adoc**
+4. **Mettre à jour INDEX.adoc** — Date, session en cours N+1, roadmap, portefeuille
+5. **Mettre à jour TEST_COVERAGE_ANALYSIS.adoc** (si tests modifiés)
+6. **Mettre à jour COMPLETED_TASKS_ARCHIVE.adoc**
+
+**Aucune étape ne peut être marquée OK si le fichier n'a pas été effectivement modifié et vérifié.**
+
+== Conventions de Code
+
+* Kotlin idiomatique, pas de commentaires sauf demande
+* Tests : JUnit5 + Kotlin test
+* Documentation : AsciiDoc (.adoc) uniquement
+* Package : `com.cheroliv.graphify.apikey`
+
+=== Références de Style — Codebases LAZY
+
+|===
+| Projet | Chemin | Rôle
+| plantuml-gradle | `/home/cheroliv/workspace/foundry/public/plantuml-gradle/plantuml-plugin` | Plugin Gradle mature — référence principale
+| bakery-gradle | `/home/cheroliv/workspace/foundry/public/bakery-gradle/bakery-plugin` | Plugin Gradle convention-based
+| graphify-plugin | `../graphify-plugin` | Plugin Gradle sibling N0
+|===
+
+== Fichiers EAGER (chargés automatiquement)
+
+|===
+| Fichier | Rôle
+| `PROMPT_REPRISE.adoc` | Mission session en cours (max 70 lignes)
+| `.agents/INDEX.adoc` | Règles + sessions récentes + roadmap
+| `.agents/SESSIONS_HISTORY.adoc` | Tableau récapitulatif
+| `AGENT.adoc` | Ce fichier — Directives complètes
+|===
+
+== Anti-Patterns
+
+[cols="1,3,3,3"]
+|===
+| # | Anti-pattern | Symptôme | Correction
+| 1 | **Agent sans `opencode.json`** | L'agent démarre nu | `opencode.json` avec `"instructions": ["AGENT.adoc"]`
+| 2 | **PROMPT_REPRISE fantôme** | Pas mis à jour en fin de session | L'étape 2 de la procédure est obligatoire
+| 3 | **Archive vide** | Template avec placeholders "TODO" | Remplir intégralement à chaque session
+| 4 | **Session trop longue** | > 50 messages ou > 3 fichiers parallèles | Splitter
+| 5 | **Split-brain .agents/** | .agents/ dupliqué dans racine et sous-projet | .agents/ est UNIQUE dans le sous-projet (RACINE DE TRAVAIL)
+|===

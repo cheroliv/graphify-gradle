@@ -1,0 +1,109 @@
+= INDEX — Api Key Pool
+:toc:
+
+_Règles absolues_ : voir `AGENT.adoc`
+_Projet_ : api-key-pool — N0 shared library (rotation clés API LLM, quota tracking, audit)
+_Ontologie spatiale_ : voir `configuration/.agents/AGENT_GOVERNANCE.adoc`
+
+_Création gouvernance_ : 2026-05-12 (Session 000 — Bootstrap)
+_Session en cours_ : 000 — Bootstrap gouvernance agent
+_Session précédente_ : aucune (projet orphelin de gouvernance)
+
+'''
+== RÈGLES ABSOLUES (résumé)
+
+=== 1. COMMITS/GIT — INTERDICTION FORMELLE sans permission
+=== 2. FICHIERS DE CONFIGURATION — RÈGLE ABSOLUE DE SÛRETÉ (backup avant modif)
+=== 3. TESTS EN FIN DE SESSION — INTERDICTION FORMELLE
+=== 4. PROCÉDURE DE FIN DE SESSION — 6 ÉTAPES OBLIGATOIRES
+
+'''
+== Architecture
+
+[source]
+----
+graphify-gradle/                     # REPO GIT
+├── graphify-plugin/                 # Plugin Gradle N0 (sibling)
+├── api-key-pool/                    # ⭐ RACINE DE TRAVAIL
+│   ├── AGENT.adoc                   # Directives agent
+│   ├── PROMPT_REPRISE.adoc          # Mission session en cours
+│   ├── opencode.json                # Config opencode
+│   ├── build.gradle.kts             # java-library + maven-publish + signing
+│   ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
+│   ├── .agents/                     # GOUVERNANCE
+│   │   ├── INDEX.adoc               # Ce fichier
+│   │   ├── SESSIONS_HISTORY.adoc    # Historique consolidé
+│   │   ├── SESSION_CHECKLIST.adoc   # Checklist ouverture/fermeture
+│   │   ├── TEST_COVERAGE_ANALYSIS.adoc
+│   │   ├── sessions/                # Archives par session
+│   │   ├── archives/                # Archives mensuelles
+│   │   └── encyclopedies/           # Connaissance froide
+│   └── src/main + src/test          # 6 src + 6 tests (66/66 PASS)
+└── settings.gradle.kts
+----
+
+'''
+== Composants Existants
+
+|===
+| Fichier | Description | Lignes
+| `ApiKeyPool.kt` | Cœur — pool de clés avec rotation | ~80
+| `QuotaTracker.kt` | Suivi quotas par clé | ~60
+| `QuotaResetManager.kt` | Réinitialisation périodique | ~55
+| `QuotaAuditLogger.kt` | Journalisation structurée | ~45
+| `models.kt` | Data classes (ApiKey, QuotaInfo, PoolState, etc.) | ~40
+| `Provider.kt` | Enum fournisseurs LLM | ~15
+|===
+
+Total : ~295 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
+66/66 PASS ✅
+
+'''
+== Roadmap
+
+|===
+| EPIC | Description | Statut | Priorité
+| GF-5 | Extraction N0 — 6 src + 6 tests (66/66 PASS), publishable indépendant | ✅ TERMINÉ (sessions 001, 002-cleanup) | P0
+| APK-0 | Bootstrap gouvernance agent | ✅ TERMINÉ (session 000) | P0
+| APK-1 | Tests intégration multi-provider (Ollama, OpenAI, DeepSeek) | À FAIRE | P1
+| APK-2 | Support quotas réels — RateLimit headers parsing (HTTP 429) | À FAIRE | P2
+| APK-3 | Stratégies de rotation avancées (round-robin pondéré, least-used) | À FAIRE | P2
+| APK-4 | Publication Maven Central | À FAIRE | P3
+|===
+
+'''
+== Sessions
+
+|===
+| # | Date | Type | Sujet | Score
+| 000 | 2026-05-12 | governance | Bootstrap gouvernance agent (.agents/ + AGENT.adoc + PROMPT_REPRISE) | 10/10
+|===
+
+_Historique pré-gouvernance_ : Sessions 001 (extraction plantuml-gradle) et 002-cleanup (Pattern A conversion)
+ont eu lieu dans le cadre de la gouvernance graphify-plugin.
+
+'''
+== Portefeuille — Projets Gouvernés
+
+|===
+| Projet | Chemin | DAG | Sessions
+| plantuml-gradle | `foundry/public/plantuml-gradle/plantuml-plugin/` | N2 | 138+
+| magic-stick | `foundry/public/magic-stick/` | N2 | 69+
+| bakery-gradle | `foundry/public/bakery-gradle/bakery-plugin/` | N2 | 21+
+| codebase-gradle | `foundry/public/codebase-gradle/` | N1 | 12+
+| graphify-plugin | `../graphify-plugin/` | N0 | 8+
+| engine | `foundry/public/engine/` | N3 | 11+
+|===
+'''
+== Fichiers Associés
+
+|===
+| Fichier | Rôle | Type
+| `AGENT.adoc` | Directives complètes | EAGER
+| `PROMPT_REPRISE.adoc` | Mission session en cours | EAGER
+| `.agents/SESSIONS_HISTORY.adoc` | Historique des sessions | EAGER
+| `.agents/TEST_COVERAGE_ANALYSIS.adoc` | Analyse couverture tests | LAZY
+| `.agents/archives/COMPLETED_TASKS_ARCHIVE_*.adoc` | Archives tâches | LAZY
+| `.agents/sessions/` | Archives par session | LAZY
+| `.agents/encyclopedies/` | Connaissance froide | COLD
+|===

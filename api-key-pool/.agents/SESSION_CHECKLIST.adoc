@@ -1,0 +1,34 @@
+= SESSION_CHECKLIST — api-key-pool
+
+== Hook d'Ouverture — Avant de commencer une session
+
+. [ ] Lire `PROMPT_REPRISE.adoc` — contexte de la session précédente
+. [ ] Lire `AGENT.adoc` — règles absolues
+. [ ] Lire `.agents/INDEX.adoc` — roadmap, état des EPICs, portefeuille
+. [ ] Vérifier l'état git (`git status`) — branche, fichiers modifiés
+. [ ] Vérifier que le build compile (`./gradlew compileKotlin`)
+
+== Pendant la session
+
+. [ ] Respecter la Règle 1 — AUCUN commit sans permission explicite
+. [ ] Respecter la Règle 2 — backup avant modif fichiers config
+. [ ] Respecter la Règle 3 — PAS de tests en fin de session sans permission
+. [ ] Vérifier que chaque modification compile avant de continuer
+
+== Hook de Fermeture — Procédure 6 étapes
+
+. [ ] 1. Rapport de session → `.agents/sessions/NNN-sujet.adoc`
+. [ ] 2. Mise à jour `PROMPT_REPRISE.adoc` — contexte reprise N+1
+. [ ] 3. Mise à jour `INDEX.adoc` — numéro de session, roadmap, statut EPICs
+. [ ] 4. Mise à jour `SESSIONS_HISTORY.adoc` — ajouter entrée
+. [ ] 5. Mise à jour `TEST_COVERAGE_ANALYSIS.adoc` (si tests modifiés)
+. [ ] 6. Mise à jour `COMPLETED_TASKS_ARCHIVE.adoc` — tâches terminées
+
+== Commandes de Vérification
+
+[source,shell]
+----
+git status
+grep -r "TOKEN\|SECRET\|PASSWORD\|API_KEY" --include="*.kts" --include="*.properties" --include="*.yml"
+./gradlew compileKotlin compileTestKotlin
+----

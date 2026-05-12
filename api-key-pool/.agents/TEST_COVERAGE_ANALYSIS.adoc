@@ -1,0 +1,21 @@
+= Test Coverage Analysis — Api Key Pool
+
+_Statut_ : 66/66 PASS ✅ (pré-gouvernance, session 001 + 002-cleanup)
+
+== Couverture actuelle
+
+|===
+| Classe de test | Tests | Couvre
+| `ApiKeyPoolTest.kt` | ~20 | Pool core — add/remove/rotate keys, quota exhaustion, reset
+| `QuotaTrackerTest.kt` | ~12 | Quota increment/decrement, limit enforcement, concurrent access
+| `QuotaResetManagerTest.kt` | ~10 | Reset cron daily/monthly, partial reset, multi-key sync
+| `QuotaAuditLoggerTest.kt` | ~8 | Event serialization, structured logging, audit trails
+| `ApiKeyModelsTest.kt` | ~8 | Jackson ser/deser, defaults, validation, immutability
+| `ProviderEnumsTest.kt` | ~8 | Provider values, fromString, case insensitivity, unknown fallback
+|===
+
+Total : 66/66 PASS ✅
+
+== Prochaine étape
+
+Session 001 — APK-1 : Tests intégration multi-provider (Ollama, OpenAI, DeepSeek).

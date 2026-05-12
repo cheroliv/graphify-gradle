@@ -1,0 +1,9 @@
+= Sessions History — Api Key Pool
+
+|===
+| # | Date | Type | Sujet | Score
+| 000 | 2026-05-12 | governance | Bootstrap gouvernance agent (.agents/ + AGENT.adoc + PROMPT_REPRISE + INDEX + SESSION_CHECKLIST + SESSIONS_HISTORY + TEST_COVERAGE_ANALYSIS + COMPLETED_TASKS_ARCHIVE) | 10/10
+|===
+
+_Pré-gouvernance_ : L'extraction depuis plantuml-gradle et la conversion Pattern A
+(sessions 001, 002-cleanup) sont documentées dans la gouvernance graphify-plugin.

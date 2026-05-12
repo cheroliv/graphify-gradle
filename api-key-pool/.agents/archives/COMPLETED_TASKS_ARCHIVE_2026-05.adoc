@@ -1,0 +1,10 @@
+= Completed Tasks Archive — Mai 2026
+
+|===
+| Date | Session | EPIC/US | Description
+| 2026-05-12 | 000 | APK-0 | Bootstrap gouvernance agent api-key-pool. Création opencode.json, AGENT.adoc, PROMPT_REPRISE.adoc, .agents/INDEX.adoc, SESSION_CHECKLIST.adoc, SESSIONS_HISTORY.adoc, TEST_COVERAGE_ANALYSIS.adoc, COMPLETED_TASKS_ARCHIVE_2026-05.adoc.
+|===
+
+_Tâches pré-gouvernance_ (sessions 001, 002-cleanup graphify-plugin) :
+- 2026-05-10 : Extraction de plantuml-gradle → api-key-pool N0 (6 src + 6 tests, 66/66 PASS)
+- 2026-05-11 : Pattern A conversion (build indépendant, maven-publish + signing)
