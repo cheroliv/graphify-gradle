@@ -12,7 +12,17 @@ class GraphifyPlugin : Plugin<Project> {
             task.rootDir = extension.rootDir.get()
             task.outputFile = extension.outputFile.get()
             task.excludePatterns = extension.excludePatterns.get()
-            task.doNotTrackState("Full filesystem scan — inherently non-incremental")
+            task.doNotTrackState("Full filesystem scan - inherently non-incremental")
+        }
+
+        project.tasks.register("verifyDagAcyclic", VerifyDagAcyclicTask::class.java) { task ->
+            task.rootDir = extension.rootDir.get()
+            if (extension.dagLevels.isPresent) {
+                task.dagLevels = extension.dagLevels.get()
+            }
+            if (extension.dagLevelsPropsFile.isPresent) {
+                task.dagLevelsPropsFile = extension.dagLevelsPropsFile.get()
+            }
         }
     }
 }

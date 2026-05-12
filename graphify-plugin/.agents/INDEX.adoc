@@ -6,8 +6,8 @@ _Projet_ : graphify-gradle — N0 (Scanner, zéro dépendance inter-plugin)
 _Ontologie spatiale_ : voir `configuration/.agents/AGENT_GOVERNANCE.adoc`
 
 _Création gouvernance_ : 2026-05-11 (Session A2 — Unification multi-projet)
-_Session en cours_ : 006 — GF-3 Intégration engine N3 (consommation graph.json par le N3)
-_Session précédente_ : 005 — GF-2 Tests intégration (feat, TERMINÉ, 44/44 PASS, 14 intégration + 30 unitaires, scan réel 203k nodes / 188k edges / 26 communautés)
+_Session en cours_ : 007 — GF-6 verifyDagAcyclic (delivre par EPIC B engine)
+_Session precedente_ : 006 — GF-3 Integration engine N3
 
 '''
 == RÈGLES ABSOLUES (résumé)
@@ -56,14 +56,16 @@ graphify-gradle/                     # CONSUMER (dogfooding) + repo git
 
 |===
 | Fichier | Description | Lignes
-| `GraphifyPlugin.kt` | Plugin Gradle — register extension + task scanWorkspace | 18
-| `GraphifyExtension.kt` | DSL — rootDir, outputFile, excludePatterns (default: build/.gradle/node_modules/.git/.idea) | 26
+| `GraphifyPlugin.kt` | Plugin Gradle — register scanWorkspace + verifyDagAcyclic | 18
+| `GraphifyExtension.kt` | DSL — rootDir, outputFile, excludePatterns, dagLevels, dagLevelsPropsFile (default: build/.gradle/node_modules/.git/.idea) | 26
 | `ScanWorkspaceTask.kt` | Cœur — Files.walkFileTree, extraction nœuds/arêtes/communautés, Jackson serialization | 294
+| `VerifyDagAcyclicTask.kt` | Detection violations DAG — levelOf resolution flexible, GradleException | 103 
+
 | `GraphModel.kt` | Data classes — GraphModel, GraphNode, GraphEdge, GraphCommunity | 28
 |===
 
-Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
-+ graphify-plugin : 30/30 PASS ✅
+Total : 469 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
++ graphify-plugin : 44/44 PASS ✅ (30 scan + 14 verifyDagAcyclic)
 + api-key-pool : 66/66 PASS ✅, publishable indépendant
 
 '''
@@ -79,6 +81,8 @@ Total : 366 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 | GF-1 | Tests unitaires — ScanWorkspaceTask (24 tests incl. .agents/ cross-project) + GraphModel (6 tests) = 30/30 PASS | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
 | GF-2 | Tests intégration — scan du workspace réel, validation format graph.json, 6 boroughs présents, exclusions effectives, 26 communautés | ✅ TERMINÉ (session 005) | P0
 | GF-3 | Intégration engine/build.gradle.kts — consommation graph.json par N3 | À FAIRE | P1
+| GF-6 | verifyDagAcyclic — Detection violations DAG inter-plugins, levelOf resolution flexible, 14 tests | ✅ TERMINE (session 007, delivre par EPIC B engine) | P0 
+
 | GF-4 | Publication Gradle Plugin Portal | À FAIRE | P2
 |===
 
