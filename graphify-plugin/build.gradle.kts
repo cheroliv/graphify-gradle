@@ -10,7 +10,7 @@ plugins {
 
 group = "com.cheroliv"
 version = libs.plugins.graphify.get().version
-kotlin.jvmToolchain(JavaVersion.VERSION_24.ordinal)
+kotlin.jvmToolchain(24)
 
 repositories {
     mavenCentral()
