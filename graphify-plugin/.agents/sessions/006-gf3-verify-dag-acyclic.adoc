@@ -1,0 +1,46 @@
+= Session 006 — GF-3 Intégration verifyDagAcyclic + scanAndVerify
+:date: 2026-05-12
+:type: feat
+:score: 10/10
+
+== Résumé
+
+EPIC A — GF-3: Migration de `verifyDagAcyclic` d'engine vers `graphify-plugin`,
+chaînage `scanWorkspace` + `verifyDagAcyclic` via `scanAndVerify`, CI intégrée.
+
+== US livrées
+
+|===
+| US | Description | Statut
+| GF-3.1 | VerifyDagAcyclicTask dans graphify-plugin (migration depuis engine) | ✅
+| GF-3.2 | scanWorkspace + verifyDagAcyclic chaînés → engine les consomme | ✅
+| GF-3.3 | CI test.yml vérifie la chaîne intégrée | ✅
+|===
+
+== Fichiers modifiés
+
+|===
+| Fichier | Modification
+| `src/main/kotlin/.../VerifyDagAcyclicTask.kt` | Réécrit: `dagLevels` + `foundryDir`, `levelOf()` résolution suffixes, `GradleException` avec détails
+| `src/main/kotlin/.../GraphifyExtension.kt` | Ajout `foundryDir` (Property<File>), `dagLevels` (MapProperty)
+| `src/main/kotlin/.../GraphifyPlugin.kt` | Register `verifyDagAcyclic` + `scanAndVerify` chaîné
+| `src/test/.../VerifyDagAcyclicTaskTest.kt` | 11 tests (acyclic OK, N1→N2, N0→N3, suffixes, underscores, custom levels)
+| `src/test/.../ScanAndVerifyIntegrationTest.kt` | 3 tests (scan→verify OK, scan→detect violation, engine contract)
+| `../../build.gradle.kts` | Config consumer: `foundryDir` + `dagLevels` dans `graphify {}`
+| `../../.github/workflows/test.yml` | CI: build plugin + publishToMavenLocal + scanAndVerify
+| `../../engine/build.gradle.kts` | Délégation verifyDagAcyclic → plugin, config `graphify {}` enrichie
+|===
+
+== Tests
+
+58/58 PASS (44 existants + 11 VerifyDagAcyclicTask + 3 ScanAndVerifyIntegration)
+
+== Décisions
+
+* Le DAG level registry est injecté via l'extension `graphify {}` — pas de fichier `.properties` externe
+* `levelOf()` normalise les suffixes `-gradle`/`-plugin` et les underscores/dash
+* Le consumer `graphify-gradle/build.gradle.kts` configure son propre `foundryDir` et `dagLevels`
+
+== Prochaine session
+
+GF-4: Publication Gradle Plugin Portal

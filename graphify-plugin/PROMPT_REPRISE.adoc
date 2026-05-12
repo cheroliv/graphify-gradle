@@ -1,36 +1,35 @@
-= PROMPT_REPRISE — Session 006 — Graphify Gradle
+= PROMPT_REPRISE — Session 008 — Graphify Gradle
 :author: cheroliv + opencode (deepseek-v4-pro)
-:date: 2026-05-11
-:session: 006
+:date: 2026-05-12
+:session: 008
 
 [abstract]
-Amorçage pour la prochaine session opencode. GF-3 à attaquer.
+Amorçage pour la prochaine session opencode. GF-4 à attaquer.
 
-== Ce qui a été accompli — Session 005 (11 mai 2026)
+== Ce qui a été accompli — Session 007 (EPIC A) / Session 006 (archivée)
 
-- **GF-2 Tests intégration** : 14 tests `ScanWorkspaceIntegrationTest.kt`
-  - Multi-borough community detection (6 repos git détectés)
-  - Cross-project edges (agent_reference, import, contains inter-boroughs)
-  - Exclusion verification (build/.gradle/.git/node_modules/.idea/target + patterns custom)
-  - Output validation (JSON valide, déterministe, large workspace 10 boroughs)
-  - Workspace mimic (foundry/office/config avec INDEX.adoc)
+- **GF-3 Intégration verifyDagAcyclic + scanAndVerify**
+  - VerifyDagAcyclicTask migrée d'engine → graphify-plugin
+  - levelOf() résolution suffixes -gradle/-plugin, underscore/dash normalization
+  - Chain scanWorkspace + verifyDagAcyclic via scanAndVerify
+  - Engine/build.gradle.kts délègue au plugin
+  - CI test.yml: build + publishToMavenLocal + scanAndVerify
 
-- **Scan workspace réel** : 203,204 nodes, 188,365 edges, 26 communautés, 4m51s, 98MB
-- Total : **44/44 PASS** (30 unitaires + 14 intégration)
+- **58/58 PASS** (44 existants + 11 VerifyDagAcyclic + 3 ScanAndVerifyIntegration)
 
-== Mission du Jour — Session 006
+== Mission du Jour — Session 008
 
-=== Objectif prioritaire : GF-3 — Intégration engine N3
+=== Objectif prioritaire : GF-4 — Publication Gradle Plugin Portal
 
-. Ajouter consommation du graph.json dans `engine/build.gradle.kts`
-. Créer une tâche Gradle dans engine qui lit le graph.json produit par graphify
-. Valider le DAG N0→N3 : graphify-gradle scanWorkspace → engine aggregateGraph
-. Vérifier que les métadonnées du graph (communautés, edges, nodes) sont exploitables côté engine
+. Configurer les secrets de publication (GRADLE_PUBLISH_KEY, GRADLE_PUBLISH_SECRET)
+. Mettre à jour la config publish dans build.gradle.kts
+. Publier com.cheroliv.graphify sur plugins.gradle.org
+. Valider que le plugin est résolvable depuis Gradle Plugin Portal
 
 === Objectifs secondaires
 
-- Publier le plugin sur Gradle Plugin Portal (GF-4)
-- Maintenir 44/44 PASS ou mieux
+- Nettoyer les warnings de build
+- Mettre à jour la version si nécessaire
 
 == Rappel — Règles Globales
 
@@ -40,5 +39,5 @@ Amorçage pour la prochaine session opencode. GF-3 à attaquer.
 . Règle 2 : Pas de ./gradlew test en fin de session sans permission
 
 [.text-right]
-*PROMPT_REPRISE mis à jour le 11 mai 2026 — Fin session 005 (GF-2 intégration tests).*
-*Prochaine session : 006 — GF-3 Intégration engine N3.*
+*PROMPT_REPRISE mis à jour le 12 mai 2026 — Fin session EPIC A (GF-2+GF-3).*
+*Prochaine session : 008 — GF-4 Publication Gradle Plugin Portal.*
