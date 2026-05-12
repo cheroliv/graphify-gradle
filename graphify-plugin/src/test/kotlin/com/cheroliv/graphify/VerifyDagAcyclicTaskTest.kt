@@ -35,7 +35,7 @@ class VerifyDagAcyclicTaskTest {
     fun setUp() {
         val project = ProjectBuilder.builder().build()
         task = project.tasks.register("verifyDagAcyclic", VerifyDagAcyclicTask::class.java).get()
-        task.rootDir = tempDir.toFile()
+        task.foundryDir = tempDir.toFile()
         task.dagLevels = levels
     }
 

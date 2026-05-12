@@ -5,6 +5,7 @@ plugins {
 graphify {
     rootDir.set(file("/home/cheroliv/workspace"))
     outputFile.set(file("graph.json"))
+    foundryDir.set(file("/home/cheroliv/workspace/foundry/OSS"))
     dagLevels.set(mapOf(
         "graphify-gradle" to 0,
         "codebase-gradle" to 1,

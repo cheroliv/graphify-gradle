@@ -8,21 +8,23 @@ class GraphifyPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.create("graphify", GraphifyExtension::class.java)
 
-        project.tasks.register("scanWorkspace", ScanWorkspaceTask::class.java) { task ->
+        val scanWorkspace = project.tasks.register("scanWorkspace", ScanWorkspaceTask::class.java) { task ->
             task.rootDir = extension.rootDir.get()
             task.outputFile = extension.outputFile.get()
             task.excludePatterns = extension.excludePatterns.get()
-            task.doNotTrackState("Full filesystem scan - inherently non-incremental")
+            task.doNotTrackState("Full filesystem scan — inherently non-incremental")
         }
 
         project.tasks.register("verifyDagAcyclic", VerifyDagAcyclicTask::class.java) { task ->
-            task.rootDir = extension.rootDir.get()
-            if (extension.dagLevels.isPresent) {
-                task.dagLevels = extension.dagLevels.get()
-            }
-            if (extension.dagLevelsPropsFile.isPresent) {
-                task.dagLevelsPropsFile = extension.dagLevelsPropsFile.get()
-            }
+            task.dagLevels = extension.dagLevels.get()
+            task.foundryDir = extension.foundryDir.get()
+        }
+
+        project.tasks.register("scanAndVerify") { task ->
+            task.group = "graphify"
+            task.description = "Chain scanWorkspace + verifyDagAcyclic for integrated validation"
+            task.dependsOn(scanWorkspace)
+            task.finalizedBy("verifyDagAcyclic")
         }
     }
 }

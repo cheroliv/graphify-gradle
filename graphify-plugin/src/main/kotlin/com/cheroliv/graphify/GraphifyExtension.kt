@@ -12,7 +12,7 @@ open class GraphifyExtension @Inject constructor(objects: ObjectFactory) {
     val outputFile: Property<File> = objects.property(File::class.java)
     val excludePatterns: ListProperty<String> = objects.listProperty(String::class.java)
     val dagLevels: MapProperty<String, Int> = objects.mapProperty(String::class.java, Int::class.java)
-    val dagLevelsPropsFile: Property<String> = objects.property(String::class.java)
+    val foundryDir: Property<File> = objects.property(File::class.java)
 
     init {
         excludePatterns.convention(

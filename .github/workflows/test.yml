@@ -24,5 +24,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build and Test
-        run: ./gradlew build
+      - name: Build and Test graphify-plugin
+        run: cd graphify-plugin && ./gradlew build
+
+      - name: Publish graphify-plugin to MavenLocal
+        run: cd graphify-plugin && ./gradlew publishToMavenLocal
+
+      - name: Verify integrated chain — scanWorkspace + verifyDagAcyclic
+        run: ./gradlew scanAndVerify
