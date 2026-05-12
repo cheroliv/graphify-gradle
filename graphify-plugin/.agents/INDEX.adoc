@@ -6,8 +6,8 @@ _Projet_ : graphify-gradle — N0 (Scanner, zéro dépendance inter-plugin)
 _Ontologie spatiale_ : voir `configuration/.agents/AGENT_GOVERNANCE.adoc`
 
 _Création gouvernance_ : 2026-05-11 (Session A2 — Unification multi-projet)
-_Session en cours_ : 007 — GF-6 verifyDagAcyclic (delivre par EPIC B engine)
-_Session precedente_ : 006 — GF-3 Integration engine N3
+_Session en cours_ : 008 — GF-4 Publication Gradle Plugin Portal
+_Session précédente_ : EPIC A — GF-2 Tests intégration + GF-3 verifyDagAcyclic + scanAndVerify (TERMINÉ, 58/58 PASS)
 
 '''
 == RÈGLES ABSOLUES (résumé)
@@ -44,7 +44,7 @@ graphify-gradle/                     # CONSUMER (dogfooding) + repo git
 │   │   └── encyclopedies/           # Connaissance froide
 │   └── src/
 │       ├── main/kotlin/com/cheroliv/graphify/
-│       └── test/                    # 30 tests (24 ScanWorkspaceTask + 6 GraphModel)
+│       └── test/                    # 58 tests (24 ScanWorkspaceTask + 14 intégration + 11 VerifyDagAcyclic + 3 ScanAndVerify + 6 GraphModel)
 └── api-key-pool/                    # BUILD INDÉPENDANT (sibling)
     ├── settings.gradle.kts          # rootProject.name = "api-key-pool"
     ├── gradlew + gradle/            # Wrapper INDÉPENDANT
@@ -56,16 +56,15 @@ graphify-gradle/                     # CONSUMER (dogfooding) + repo git
 
 |===
 | Fichier | Description | Lignes
-| `GraphifyPlugin.kt` | Plugin Gradle — register scanWorkspace + verifyDagAcyclic | 18
-| `GraphifyExtension.kt` | DSL — rootDir, outputFile, excludePatterns, dagLevels, dagLevelsPropsFile (default: build/.gradle/node_modules/.git/.idea) | 26
-| `ScanWorkspaceTask.kt` | Cœur — Files.walkFileTree, extraction nœuds/arêtes/communautés, Jackson serialization | 294
-| `VerifyDagAcyclicTask.kt` | Detection violations DAG — levelOf resolution flexible, GradleException | 103 
-
+| `GraphifyPlugin.kt` | Plugin Gradle — register scanWorkspace + verifyDagAcyclic + scanAndVerify | 30
+| `GraphifyExtension.kt` | DSL — rootDir, outputFile, excludePatterns, dagLevels, foundryDir | 28
+| `ScanWorkspaceTask.kt` | Cœur — Files.walkFileTree, extraction nœuds/arêtes/communautés, Jackson serialization | 297
+| `VerifyDagAcyclicTask.kt` | Détection violations DAG — levelOf résolution suffixes, GradleException avec détails | 88
 | `GraphModel.kt` | Data classes — GraphModel, GraphNode, GraphEdge, GraphCommunity | 28
 |===
 
-Total : 469 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
-+ graphify-plugin : 44/44 PASS ✅ (30 scan + 14 verifyDagAcyclic)
+Total : 471 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
++ graphify-plugin : 58/58 PASS ✅ (30 scan + 14 verifyDagAcyclic + 3 ScanAndVerify)
 + api-key-pool : 66/66 PASS ✅, publishable indépendant
 
 '''
@@ -75,14 +74,12 @@ Total : 469 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 | EPIC | Description | Statut | Priorité
 | GF-5 | Extraction api-key-pool N0 — 6 src + 6 tests (66 PASS), publishable indépendant (Pattern A) | ✅ TERMINÉ (sessions 001, 002-cleanup) | P0
 | GF-0 | Bootstrap gouvernance agent | ✅ TERMINÉ (session 000) | P0
-| GF-0.1 | Correction gouvernance — migration .agents/ racine → graphify-plugin/ (pattern foundry standard) | ✅ TERMINÉ (session 003-correction) | P0
+| GF-0.1 | Correction gouvernance — migration .agents/ racine → graphify-plugin/ (pattern foundry standard) | ✅ TERMINÉ (session 003) | P0
 | GF-0.2 | Mise à jour langchain4j 1.14.1 globale (10 libs.versions.toml / 9 repos) | ✅ TERMINÉ (session 004) | P0
 | A2.1 | Unification Pattern A — builds indépendants (consumer + plugin + api-key-pool), suppression nested leak | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
-| GF-1 | Tests unitaires — ScanWorkspaceTask (24 tests incl. .agents/ cross-project) + GraphModel (6 tests) = 30/30 PASS | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
-| GF-2 | Tests intégration — scan du workspace réel, validation format graph.json, 6 boroughs présents, exclusions effectives, 26 communautés | ✅ TERMINÉ (session 005) | P0
-| GF-3 | Intégration engine/build.gradle.kts — consommation graph.json par N3 | À FAIRE | P1
-| GF-6 | verifyDagAcyclic — Detection violations DAG inter-plugins, levelOf resolution flexible, 14 tests | ✅ TERMINE (session 007, delivre par EPIC B engine) | P0 
-
+| GF-1 | Tests unitaires — ScanWorkspaceTask (24 tests) + GraphModel (6 tests) = 30/30 PASS | ✅ TERMINÉ (sessions 002, 002-cleanup) | P0
+| GF-2 | Tests intégration — scan workspace réel, validation format, 6 boroughs, exclusions, 26 communautés | ✅ TERMINÉ (session 005) | P0
+| GF-3 | Intégration engine — verifyDagAcyclicTask migrée + scanAndVerify chaîné + CI chain | ✅ TERMINÉ (session EPIC A) | P1
 | GF-4 | Publication Gradle Plugin Portal | À FAIRE | P2
 |===
 
@@ -91,7 +88,8 @@ Total : 469 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 
 |===
 | # | Date | Type | Sujet | Score
-| 006 | 2026-05-12 | feat | GF-3 — Intégration engine N3 (consommation graph.json) | —
+| EPIC A | 2026-05-12 | feat | GF-2 Tests intégration + GF-3 verifyDagAcyclic + scanAndVerify (58/58 PASS, CI intégrée) | 10/10
+| 006 | 2026-05-12 | feat | GF-3 — Intégration engine N3 (consommation graph.json) | 10/10
 | 005 | 2026-05-11 | feat | GF-2 — Tests intégration (scan workspace réel, 44/44 PASS, 26 communautés) | 10/10
 | 004 | 2026-05-11 | chore | Mise à jour langchain4j 1.14.1 globale (10 libs.versions.toml / 9 repos) | 10/10
 | 003-correction | 2026-05-11 | fix | Migration gouvernance racine → graphify-plugin/ (pattern foundry standard) | 10/10
@@ -110,7 +108,7 @@ Total : 469 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 | magic_stick | `foundry/OSS/magic_stick/` | N2 | 64+
 | bakery-gradle | `foundry/OSS/bakery-gradle/bakery-plugin/` | N2 | 13+
 | codebase-gradle | `foundry/OSS/codebase-gradle/` | N1 | 7+
-| graphify-gradle | `foundry/OSS/graphify-gradle/graphify-plugin/` | N0 | 7
+| graphify-gradle | `foundry/OSS/graphify-gradle/graphify-plugin/` | N0 | 8
 | engine | `foundry/OSS/engine/` | N3 | 2+
 |===
 

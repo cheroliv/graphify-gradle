@@ -2,10 +2,9 @@
 
 |===
 | # | Date | Type | Sujet | Score
+| EPIC A | 2026-05-12 | feat | GF-2 Tests intégration + GF-3 verifyDagAcyclic + scanAndVerify (58/58 PASS, CI intégrée). VerifyDagAcyclicTask migrée d'engine → graphify-plugin, levelOf résolution suffixes (-gradle/-plugin, underscore/dash), scanAndVerify chaîné, engine/bakery/consumer configurés. CI: build + publishToMavenLocal + scanAndVerify. | 10/10
 | 007 | 2026-05-12 | feat | GF-6 verifyDagAcyclic — Detection violations DAG + 14 tests (delivre par EPIC B engine). VerifyDagAcyclicTask.kt 103 lignes, levelOf resolution flexible (suffixes -gradle/-plugin, underscore/dash normalization). Total : 57/57 PASS (44 existing + 14 new). | 10/10
-
 | 006 | 2026-05-12 | feat | GF-3 Integration engine N3 - graph.json consume par N3 | 10/10
-
 | 005 | 2026-05-11 | feat | GF-2 — Tests intégration : 14 tests ScanWorkspaceIntegrationTest (multi-borough communities, cross-project edges, exclusion verification, output validation, workspace mimic). Scan workspace réel : 203 204 nodes, 188 365 edges, 26 communautés, 4m51s, 98MB. 6 boroughs confirmés. Total : 44/44 PASS. | 10/10
 | 004 | 2026-05-11 | chore | Mise à jour langchain4j 1.12.x → 1.14.1 globale : 10 libs.versions.toml dans 9 repos (codebase, slider, codex, jhipster, plantuml x2, newpipe, readme, planner, edster). langchain4j-beta 1.12.2-beta22 → 1.14.1-beta24 | 10/10
 | 003-correction | 2026-05-11 | fix | Migration gouvernance racine → graphify-plugin/ (pattern foundry standard) : AGENT.adoc + PROMPT_REPRISE.adoc + opencode.json + .agents/ déplacés de racine vers graphify-plugin/, AGENT.adoc réécrit avec chemins corrigés, INDEX.adoc mis à jour | 10/10
