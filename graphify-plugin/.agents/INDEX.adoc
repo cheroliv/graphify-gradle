@@ -105,7 +105,7 @@ Total : 471 lignes Kotlin, compilable ✅, publishToMavenLocal ✅
 |===
 | Projet | Chemin | DAG | Sessions
 | plantuml-gradle | `foundry/OSS/plantuml-gradle/plantuml-plugin/` | N2 | 138
-| magic_stick | `foundry/OSS/magic_stick/` | N2 | 64+
+| magic-stick | `foundry/OSS/magic-stick/` | N2 | 64+
 | bakery-gradle | `foundry/OSS/bakery-gradle/bakery-plugin/` | N2 | 13+
 | codebase-gradle | `foundry/OSS/codebase-gradle/` | N1 | 7+
 | graphify-gradle | `foundry/OSS/graphify-gradle/graphify-plugin/` | N0 | 8
