@@ -1,5 +1,5 @@
 [versions]
-graphify = "0.0.1"
+graphify = "0.0.2"
 kotlin = "2.2.20"
 jackson = "2.18.3"
 junit = "5.10.1"

@@ -6,11 +6,12 @@ plugins {
     `maven-publish`
     `java-gradle-plugin`
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.publish)
 }
 
 group = "com.cheroliv"
 version = libs.plugins.graphify.get().version
-kotlin.jvmToolchain(24)
+kotlin.jvmToolchain(23)
 
 repositories {
     mavenCentral()
@@ -88,6 +89,18 @@ publishing {
         }
     }
     repositories {
+        maven {
+            name = "sonatype"
+            url = if (version.toString().endsWith("-SNAPSHOT")) {
+                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            } else {
+                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            }
+            credentials {
+                username = project.findProperty("ossrhUsername") as? String
+                password = project.findProperty("ossrhPassword") as? String
+            }
+        }
         mavenCentral()
     }
 }
