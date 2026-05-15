@@ -1,43 +1,45 @@
-= PROMPT_REPRISE — Session 008 — Graphify Gradle
+= PROMPT_REPRISE — Session 009 — Graphify Gradle
 :author: cheroliv + opencode (deepseek-v4-pro)
-:date: 2026-05-12
-:session: 008
+:date: 2026-05-15
+:session: 009
 
 [abstract]
-Amorçage pour la prochaine session opencode. GF-4 à attaquer.
+Amorcage pour la prochaine session opencode. Publication 0.0.2 sur Gradle Plugin Portal.
 
-== Ce qui a été accompli — Session 007 (EPIC A) / Session 006 (archivée)
+== Ce qui a ete accompli — Session 008 (cheroliv.com Session 28, cross-borough)
 
-- **GF-3 Intégration verifyDagAcyclic + scanAndVerify**
-  - VerifyDagAcyclicTask migrée d'engine → graphify-plugin
-  - levelOf() résolution suffixes -gradle/-plugin, underscore/dash normalization
-  - Chain scanWorkspace + verifyDagAcyclic via scanAndVerify
-  - Engine/build.gradle.kts délègue au plugin
-  - CI test.yml: build + publishToMavenLocal + scanAndVerify
+- **Bump graphify 0.0.1 → 0.0.2**
+  - 2 catalogs bumpes : root `graphify-gradle/gradle/libs.versions.toml` + plugin `graphify-plugin/gradle/libs.versions.toml`
+  - `com.gradle.plugin-publish` v1.3.1 ajoute (`./gradlew publishPlugins`)
+  - Sonatype conserve pour coherence d'archi (non utilise)
+  - jvmToolchain(23) aligne sur bakery-plugin
+  - Compile ✅, MavenLocal ✅
 
-- **58/58 PASS** (44 existants + 11 VerifyDagAcyclic + 3 ScanAndVerifyIntegration)
+- **Refacto graphify → bakery**
+  - bakery-plugin : `implementation(libs.graphify.plugin)` + `mavenLocal()`, compile ✅
+  - engine : suppression `com.cheroliv.graphify` (plugin + bloc), compile ✅
 
-== Mission du Jour — Session 008
+== Mission du Jour — Session 009
 
-=== Objectif prioritaire : GF-4 — Publication Gradle Plugin Portal
+=== Objectif prioritaire : Publier graphify 0.0.2 sur Gradle Plugin Portal
 
-. Configurer les secrets de publication (GRADLE_PUBLISH_KEY, GRADLE_PUBLISH_SECRET)
-. Mettre à jour la config publish dans build.gradle.kts
-. Publier com.cheroliv.graphify sur plugins.gradle.org
-. Valider que le plugin est résolvable depuis Gradle Plugin Portal
+. Verifier les secrets `gradle.publish.key` + `gradle.publish.secret` dans `~/.gradle/gradle.properties`
+. `./gradlew publishPlugins` — publier sur plugins.gradle.org
+. Resoudre l'erreur 402 Payment Required si encore presente
+. Valider que le plugin est resolvable depuis Gradle Plugin Portal
 
 === Objectifs secondaires
 
 - Nettoyer les warnings de build
-- Mettre à jour la version si nécessaire
+- Verifier que bakery-plugin consomme bien graphify 0.0.2 depuis le portal (et plus MavenLocal)
 
-== Rappel — Règles Globales
+== Rappel — Regles Globales
 
-. Règle 0 : publishToMavenLocal OBLIGATOIRE après modif code source
-. Règle 1 : Aucun commit sans permission explicite
-. Règle 1b : Backup avant modif fichier config non versionné
-. Règle 2 : Pas de ./gradlew test en fin de session sans permission
+. Regle 0 : publishToMavenLocal OBLIGATOIRE apres modif code source
+. Regle 1 : Aucun commit sans permission explicite
+. Regle 1b : Backup avant modif fichier config non versionne
+. Regle 2 : Pas de ./gradlew test en fin de session sans permission
 
 [.text-right]
-*PROMPT_REPRISE mis à jour le 12 mai 2026 — Fin session EPIC A (GF-2+GF-3).*
-*Prochaine session : 008 — GF-4 Publication Gradle Plugin Portal.*
+*PROMPT_REPRISE mis a jour le 15 mai 2026 — Fin session 008 cross-borough.*
+*Prochaine session : 009 — Publication Gradle Plugin Portal 0.0.2.*
